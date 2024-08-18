@@ -1,0 +1,143 @@
+PORT=5000
+MONGO_URL="mongodb+srv://balendrabhavesh:User%4098@mern.cbnhnxp.mongodb.net/03-ecommerce?retryWrites=true&w=majority&appName=MERN"
+SECRET="HelloThere@45#"
+
+tailwind
+
+grid 
+grid-cols-2
+col-span-2
+grid-rows-2
+justify-item-center
+items-center
+
+flex 
+justify-center
+
+
+width 
+
+w-1
+w-screen
+w-full
+w-min
+w-max
+w-fit
+
+min-w-0
+min-w-min
+
+max-w-xs
+max-w-sm
+max-w-xs	max-width: 20rem; /* 320px */
+max-w-sm	max-width: 24rem; /* 384px */
+max-w-md	max-width: 28rem; /* 448px */
+max-w-lg	max-width: 32rem; /* 512px */
+max-w-xl	max-width: 36rem; /* 576px */
+max-w-2xl	max-width: 42rem; /* 672px */
+max-w-3xl	max-width: 48rem; /* 768px */
+max-w-4xl	max-width: 56rem; /* 896px */
+max-w-5xl	max-width: 64rem; /* 1024px */
+max-w-6xl	max-width: 72rem; /* 1152px */
+max-w-7xl	max-width: 80rem; /* 1280px */
+max-w-full	max-width: 100%;
+max-w-min	max-width: min-content;
+max-w-max	max-width: max-content;
+max-w-fit	max-width: fit-content;
+max-w-prose	max-width: 65ch;
+max-w-screen-sm	max-width: 640px;
+max-w-screen-md	max-width: 768px;
+max-w-screen-lg	max-width: 1024px;
+max-w-screen-xl	max-width: 1280px;
+max-w-screen-2xl	max-width: 1536px;
+
+height 
+h-[]
+
+size both apply for height and width square
+size-0
+size-full
+
+font-sans
+
+text-xs	font-size: 0.75rem; /* 12px */
+line-height: 1rem; /* 16px */
+text-sm	font-size: 0.875rem; /* 14px */
+line-height: 1.25rem; /* 20px */
+text-base	font-size: 1rem; /* 16px */
+line-height: 1.5rem; /* 24px */
+text-lg	font-size: 1.125rem; /* 18px */
+line-height: 1.75rem; /* 28px */
+text-xl	font-size: 1.25rem; /* 20px */
+line-height: 1.75rem; /* 28px */
+text-2xl	font-size: 1.5rem; /* 24px */
+line-height: 2rem; /* 32px */
+text-3xl	font-size: 1.875rem; /* 30px */
+line-height: 2.25rem; /* 36px */
+text-4xl	font-size: 2.25rem; /* 36px */
+line-height: 2.5rem; /* 40px */
+text-5xl	font-size: 3rem; /* 48px */
+line-height: 1;
+text-6xl	font-size: 3.75rem; /* 60px */
+line-height: 1;
+text-7xl	font-size: 4.5rem; /* 72px */
+line-height: 1;
+text-8xl	font-size: 6rem; /* 96px */
+line-height: 1;
+text-9xl	font-size: 8rem; /* 128px */
+line-height: 1;
+
+italic
+text-[1rem]
+font-normal
+font-bold
+font-extrabold
+tracking-wide -> lettersapcing
+list-none
+text-center -> align
+text-black-500 -> text color
+underline -> underline
+overline
+line-through
+no-underline
+
+upercase -> text transform
+lowercase
+capitalize
+
+text-wrap
+
+
+bg-purple-500
+bg-auto	background-size: auto;
+bg-cover	background-size: cover;
+bg-contain	background-size: contain;
+bg-gradient-to-t	background-image: linear-gradient(to top, var(--tw-gradient-stops));
+
+border only use value 0,2,4,8
+<div className="size-[200px]  border-2 border-red-400 rounded">hello</div>
+Class
+Properties
+border-0	border-width: 0px;
+border-2	border-width: 2px;
+border-4	border-width: 4px;
+border-8	border-width: 8px;
+border	border-width: 1px;
+border-x-0	border-left-width: 0px;
+border-right-width: 0px;
+
+Class
+Properties
+rounded-none	border-radius: 0px;
+rounded-sm	border-radius: 0.125rem; /* 2px */
+rounded	border-radius: 0.25rem; /* 4px */
+rounded-md	border-radius: 0.375rem; /* 6px */
+rounded-lg	border-radius: 0.5rem; /* 8px */
+rounded-xl	border-radius: 0.75rem; /* 12px */
+rounded-2xl	border-radius: 1rem; /* 16px */
+
+
+
+
+
+

@@ -1,0 +1,238 @@
+IN JS Backend
+
+ 1)
+npm init -y
+npm i express
+node index.js -> in this steps we need to restart the server each time 
+
+2)
+we can use nodemon as dev in script 
+"dev":"nodemon index.js"
+"start":"node index.js"
+
+
+3)
+simple-js-backend/
+├── src/
+│   ├── index.js  or server.js
+│   ├── public/
+│   │   ├── index.html
+│   │   ├── styles.css
+│   │   └── images/
+│   │       └── logo.png
+├── dist/ or build
+├── package.json
+
+start or server
+dist or build
+npm i cpx
+ "scripts": {
+    "dev": "nodemon src/index.js",
+    "build": "cpx \"src/**/*\" dist/",
+    "start": "node dist/index.js"  
+  },
+
+
+
+so in this we can directly run backend in the production node src/index.js but when we have
+assist or other static file its best to build because it minimnize and optize in dist folder 
+the run it from there in production its your choise to run in dist or src in development mode
+cpx copy all file from src to dist .here  \"src/**/*\"    \"  \" between this two we can have 
+command to run concrueently  eg: -> "dev" or "serve" : "concurrently \"npx tsc -w\" \"nodemon dist/index.js\""
+here concurrently is package
+
+& -> between two means run parallely but this is only for window so we use concurrently
+eg: "dev" : "npx tsc -w & nodemon dist/index.js"
+
+&& -> this will run sequentially first npx tsc finsh then nodemon in this tsc run indefinitely in watch mode second command wont execute
+eg: "dev" : "npx tsc -w && nodemon dist/index.js" 
+
+
+typescript
+tsc src/index.ts or tsc index.ts vs npx tsc src/index.ts
+tsc is when i have typescript globally install
+npx tsc when i have on my project
+
+important 
+when i have outDir and rootDir in ts.configue on then only use npx tsc not npx tsc index.ts 
+
+
+steps
+1)index.ts
+2)npm init -y
+3)tsc --init 
+4)@types/node
+5)npm i express
+6)npm i -D @types/express
+7)import express, { Request, Response } from "express"; like this
+
+to run first transpile ts to js
+
+8)npx tsc index.ts -> tsc index only one compile if index.ts all at once
+when i have outDir and rootDir in ts.configue on then only use npx tsc not npx tsc index.ts 
+
+remember to change "main" in package.json as index.js
+
+{
+  "compilerOptions": {
+    "target": "ES2016",
+    "module": "ES6",
+    "strict": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "noEmitOnError": true,
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "jsx": "react",
+    "moduleResolution": "node"
+  },
+ "include": ["src"],
+ "exclude": ["node_modules", "dist"]
+
+}
+
+now to how to watch continuos
+
+your-project/
+├── src/
+│   ├── controllers/
+│   │   └── userController.ts
+│   ├── models/
+│   │   └── user.ts
+│   ├── routes/
+│   │   └── userRoutes.ts
+│   ├── services/
+│   │   └── userService.ts
+│   ├── utils/
+│   │   └── logger.ts
+│   ├── middlewares/
+│   │   └── errorHandler.ts
+│   ├── config/
+│   │   └── database.ts
+│   ├── index.ts
+│   ├── app.ts
+├── dist/
+│   └── index.js
+├── tests/
+│   └── userController.test.ts
+├── node_modules/
+├── package.json
+├── tsconfig.json
+├── .eslintrc.json
+├── .gitignore
+├── README.md
+
+->tsc -watch or tsc -w or npx tsc -w (if TypeScript is installed locally)
+this compile when you change something in ts file
+
+npm install ts-node --save-dev
+
+tsc app.ts node app.js
+ts-node app.ts
+nodemon app.ts (server)
+npm start
+
+
+ts-node directly run index.ts but tsc index.ts then run node index.js extra steps
+
+ "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "dev": "dev": "nodemon --watch \"src/**/*.ts\" --exec \"ts-node\" src/index.ts"
+  },
+  "dependencies": {
+    "express": "^4.17.1"
+  },
+  "devDependencies": {
+    "typescript": "^4.4.3",
+    "ts-node": "^10.4.0",
+    "nodemon": "^2.0.12"
+  }
+
+nodemon file
+{
+  "watch": ["src"],
+  "ext": "ts",
+  "exec": "ts-node src/index.ts"
+}
+
+===========================================================
+
+"scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "dev": "dev": "nodemon --watch \"src/**/*.ts\" --exec \"ts-node\" src/index.ts"
+  },
+
+or
+
+  "scripts": {
+    "start": "node ./dist/index.js",
+     "build":"npx tsc"
+    "dev": "nodemon ./src/index.ts" //this neeed ts-node
+  },
+
+
+or
+  "scripts": {
+    "dev": "ts-node-dev --respawn --transpile-only --files src/index.ts"
+  }
+npm i -D ts-node-dev
+
+
+
+===========================================================================================
+nodemon:
+
+nodemon is a utility that monitors for changes in files in a Node.js application and automatically restarts the server when a file changes. It's particularly useful during development to avoid manually restarting the application each time you make changes.
+--watch 'src/**/*.ts':
+
+The --watch option specifies which files or directories nodemon should monitor for changes.
+'src/**/*.ts' is a glob pattern that tells nodemon to watch all TypeScript files (.ts) within the src directory and its subdirectories. This means that if any TypeScript file within src changes, nodemon will restart the application.
+Note: On Unix-based systems (Linux, macOS), single quotes (') are used around the glob pattern. On Windows, you may need to use double quotes (").
+
+--exec 'ts-node':
+
+The --exec option specifies the command that should be executed when nodemon detects a change.
+'ts-node' is the command used to run TypeScript files directly. ts-node compiles TypeScript to JavaScript in memory and executes it.
+src/index.ts:
+
+This specifies the entry point of your application. nodemon will start your application using ts-node to run this TypeScript file.
+
+
+
+Both "dev": "nodemon ./src/index.ts" and nodemon --watch 'src/**/*.ts' --exec 'ts-node' src/index.ts are valid commands for using nodemon to run TypeScript files, but they serve different purposes and have different configurations. Let’s compare them in detail:
+
+1. nodemon ./src/index.ts
+What It Does:
+Command: nodemon ./src/index.ts
+Behavior: This command tells nodemon to run ./src/index.ts directly.
+Characteristics:
+Simple Execution: nodemon will execute ./src/index.ts and restart the application when changes are detected.
+Requires ts-node: This command assumes that ts-node is configured as the default interpreter for TypeScript files in nodemon. If ts-node is not set up as a default, this command might not work correctly. You would need to specify ts-node explicitly if it's not configured globally or in nodemon.
+Configuration:
+Minimal Setup: This setup is simpler but may require additional configuration to ensure that TypeScript files are interpreted correctly.
+2. nodemon --watch 'src/**/*.ts' --exec 'ts-node' src/index.ts
+What It Does:
+Command: nodemon --watch 'src/**/*.ts' --exec 'ts-node' src/index.ts
+Behavior: This command runs ts-node to execute src/index.ts and tells nodemon to watch for changes in all .ts files within the src directory. When a change is detected, nodemon restarts the application.
+Characteristics:
+Explicit Execution Command: By specifying --exec 'ts-node', this command explicitly tells nodemon to use ts-node to run TypeScript files.
+Fine-Grained Watching: The --watch option specifies a glob pattern to watch all TypeScript files (.ts) in the src directory, ensuring that changes to any TypeScript file trigger a restart.
+Clear Configuration: This command is more explicit and ensures that ts-node is used to run TypeScript files, making it clear that TypeScript compilation is handled by ts-node.
+Configuration:
+Flexibility: This setup is more flexible and clear, especially in projects where ts-node is not the default interpreter. It provides better control over what files are watched and how they are executed.
+Summary of Differences
+Simplicity vs. Explicit Configuration:
+
+nodemon ./src/index.ts is simpler and relies on default behavior, which may be less clear and less flexible.
+nodemon --watch 'src/**/*.ts' --exec 'ts-node' src/index.ts is more explicit and ensures that ts-node is used, with fine-grained control over which files trigger a restart.
+File Watching:
+
+nodemon ./src/index.ts may not explicitly configure which files are watched unless nodemon is configured to handle TypeScript files.
+nodemon --watch 'src/**/*.ts' --exec 'ts-node' src/index.ts clearly specifies that all TypeScript files in src should be watched for changes.
+Configuration Needs:
+
+The simpler command (nodemon ./src/index.ts) might require additional configuration or may not work correctly without ts-node configured properly.
+The more explicit command (nodemon --watch 'src/**/*.ts' --exec 'ts-node' src/index.ts) ensures that ts-node is used and provides clear file watching behavior.
+In general, the more explicit configuration (nodemon --watch 'src/**/*.ts' --exec 'ts-node' src/index.ts) is preferred for TypeScript projects to ensure that ts-node is used and that the appropriate files are watched for changes.

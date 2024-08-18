@@ -1,0 +1,4 @@
+docker login -> in vs code clsi its a command
+
+Dockerfile -> its name for docker file 
+

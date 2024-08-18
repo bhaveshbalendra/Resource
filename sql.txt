@@ -1,0 +1,8 @@
+system cls; -> clean terminal
+show databases; 
+create database school_db;
+use school_db;
+select database(); -> check on which database
+drop database test_db;
+
+

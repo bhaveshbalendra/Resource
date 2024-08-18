@@ -1,0 +1,71 @@
+not-found.tsx is the page on app folder for coustome not found name should be exactly same on nested folder can also be used
+
+import {notFound} from "next/navigation"
+if() {
+notFound();}
+
+
+private folders
+start with _ and excluded in route
+eg: _lib or %5Flib
+
+
+route group ()
+this is omitted from the route
+eg (auth) inside login register forgot password
+
+layout
+
+Link extend <a> but link dont refesh like a when redirect
+import Link from "next/Link"
+
+<Link href="/blog">Blog</Link>
+
+
+<Link href="/blog" replace>Blog</Link> remove history
+
+
+import { useRouter } from "next/navigation";
+  const router = useRouter();
+ function handleClick() {
+    router.push("/");
+  }
+
+template.tsx(refresh page) vs layout.tsx
+
+
+loading.tsx wrap page.tsx 
+
+
+error.tsx bubble up and on nested child
+in page
+  if (random === 1) {
+    throw new Error("loading review");
+  }
+
+in error
+"use client"
+import React from "react";
+
+export default function ErrorBoundary({
+  error,
+  reset,
+}: {
+  error: Error;
+  reset: () => void;
+}) {
+  return (
+    <div>
+      {error.message} <button onClick={reset}></button>
+    </div>
+  );
+}
+
+if layout and error on same folder adjacent when error in layout it will not show to handle this put the error on the parent folder
+
+
+parallel routes
+using slot @foldername
+this slot are passed to its corresponding layout.tsx file
+independent routes ,error ,loading,sub navigation,
+

@@ -1,0 +1,384 @@
+In CMD
+> mongod --version
+>cls (clean)
+
+(for mongos shell)
+start by type in cmd ->  mongosh  and ctrt +D to exit
+test>show database or show dbs
+
+create database
+test>show students (note database will not show unless you least one collection with data)
+
+switch to other db :
+>use admin
+
+create collection :
+students> db.createCollection("data")  (note that db refers to students)
+
+students>show collections
+
+drop collection
+students>db.data.drop()
+
+drop Database
+students>db.dropDatabase()
+
+CURD opertions
+
+create
+students>db.data.insertOne({'name':'bhavesh',age:29})
+students> db.data.insertMany([{'name':'bhavesh',age:29},{'name':'vipul',age:22},{'name':'tarun',age:22}]) (array of objects)
+students> db.data.find() (to see all the documents inside collection)
+
+Note:
+special characters and Reserved words when you use them as a field name in object so use quotes is necessary eg : {"birth day":25,"34HI" : 85}
+
+Ordered and Unordered Insert(ordered:false) Operations
+students> db.data.insertMany([{ 'name': 'babita', age: 22 }, { 'name': 'vipul', age: 22,_id: ObjectId('666e79d41664f0a1dd90defe') }, { 'name': 'shikhar', age: 22 }],{ordered:false})
+ordered false means that the data after the object will be inserted if there is error in the one oject by default it added till object which is in front of object not behind it
+
+Note:
+Mongo is case Sensitive
+
+find collections document 
+
+students> db.data.find({"name" : "babita"})  -> this show all object with babita name 
+students> db.data.findOne({"name" : "babita"}) -> this only shows first object 
+
+import export data 
+so in mongo db we use monogodb database tool to import export it work on simple cmd not in mongos shell eg C:\Users\bhojr>
+for importing json
+C:\Users\bhojr> mongoimport D:\MongoDB\Practice\jsonfile\products.json -d shop -c products (Note that this is for json file which contains only obejects)
+
+C:\Users\bhojr>mongoimport D:\MongoDB\Practice\jsonfile\sales.json -d shop -c sales --jsonArray ->(this if for array of object here -d is data base flag -c is collection flag --jsonArray is array flag when apply find to collection it only show first 21 object to show type it(iterator) limited to import is 16mb)
+
+for export 
+C:\Users\bhojr>mongoexport -d shop -c sales -o D:\MongoDB\Practice\jsonfile\salestest.json (this salestest.json is name of save file)
+
+comparsion operators
+$eq(equalto)
+shop> db.products.find({"price" :{$eq : 69}})
+$ne(not equal)
+$gt(greater than)
+$gte(greater than equal)
+$lt(less than)
+$lte(less than equal)
+$in(in operator)
+shop> db.products.find({"price" :{$in : [249,129,39]}})
+$nin(not in operator)
+
+Cursor Methods
+count()
+shop> db.products.find({"price":{$in : [699,236,69]}}).limit(1).count()
+
+limit()
+shop> db.products.find({"price":{$in : [699,236,69]}}).limit(1)
+
+skip()
+shop> db.products.find({"price":{$in : [699,236,69]}}).limit(2).skip(1) (skip escaple first result)
+
+sort()
+1 for ascending and -1 for decending
+shop> db.products.find({"price":{$gt : 699}}).limit(5).sort({"price":1}) (inside sort specify the feild of the object which way you want to sort)
+
+Note : be caution using limit() and skip() consider using indexing to optimize query performance
+
+logical operators (create new array which contain filtered documents)
+$and
+shop> db.products.find({$and : [{"price" : {$gt : 100}},{"name" : {$eq : "Diamond Ring"}}]}) or shop> db.products.find({"price":{$gt:100},"name":"Diamond Ring"}) (by default find has implicit and operation for multiple value passed we can pass multiple condition as obeject)
+$or
+shop> db.products.find({$or : [{"price" : {$gt : 2000}},{"name" :"Diamond Ring"}]})
+$not
+shop> db.products.find({"price" : {$not:{$eq:100}}}) or shop> db.products.find({"price" : {$ne:100}})
+$nor
+shop> db.products.find({$nor : [{"price" : {$gt : 7000}},{"name" : "Diamond Ring"}]}) (except price < 7000 or name Diamond Ring show all )
+
+complex expressions (Note use $ infront of every field)
+{ $expr: { operator: [field, value] } }
+shop > db.products.find({ $expr: { $gt: ['$price', 1340] } });
+shop> db.sales.find({$expr:{$gt:[{$multiply:["$quantity","$price"]},"$targetPrice"]}})  (more operator like add multipy $ should be present infront of decared fields)
+
+Elements Operator
+$exists
+shop> db.products.find({price : {$exists: true}}) (this will return objects which have price it can be true or false combine with another condition)
+$type
+shop> db.products.find({price : {$type:"number"}}) (this will return price with number type integer type can have number,bool,string... or it can be represented by digit)
+shop> db.products.find({isFeatured : {$type:8}})
+// 1: Double
+// 2: String
+// 3: Object
+// 4: Array
+// 5: Binary data
+// 6: Undefined
+// 7: Object id
+// 8: Boolean
+// 9: Date
+// 10: Null
+// 11: Regular expression
+// 12: JavaScript code
+// 13: Symbol
+// 14: JavaScript code with scope
+// 17: 64-bit integer
+
+$size
+shop> db.comments.find({comments:{$size:2}}) (it returns objects with comments field which is array inside an object who comments field have two object inside it the array which only have two data)
+
+Projections :
+db.collection.find({}, { field1: 1, field2: 1 }) ->(this is the structure of the projection find accept two field first one is query and second one is projection it can only be inculicive or exculicive example {name:1, title:1, _id:0} so 1 is mean that name show only name field and title field this is inculicive and {name:0, title:0, _id:1} 0 mean exculicive show all except name and title. we cannot have exculicive and inculive in same eg {name:1, title:0, _id:0} Note that id is default inculcive  )
+shop> db.comments.find({"comments" : {$size:2}},{title:1,_id:0})
+
+embedded documents: use quotes for field
+
+[
+  {
+    _id: 3,
+    title: 'Getting Started with NoSQL Databases',
+    content: 'NoSQL databases provide flexible data models...',
+    author: 'Sarah Williams',
+    comments: [
+      { user: 'Eva', text: 'Very helpful!' },
+      { user: 'Frank', text: 'Clear explanations.' }
+    ],
+    metadata: { views: 1200, likes: 40 }
+  },
+  {
+    _id: 5,
+    title: 'Optimizing MongoDB Performance',
+    content: 'Tips and tricks to improve MongoDB performance...',
+    author: 'Alex Turner',
+    comments: [
+      { user: 'Ivy', text: 'Very practical advice!' },
+      { user: 'Jack', text: 'Helped me a lot.' }
+    ],
+    metadata: { views: 900, likes: 55 }
+  }]
+ 
+
+
+so in this we have array of objects and a nested array of object with field comments **(so this object with id 5 can be return whole using embedded document which gave condition on the nested objects)**
+shop> db.comments.find({"comments.user" : "Lily"})
+return
+[
+  {
+    _id: 6,
+    title: 'Schema Design Best Practices',
+    content: 'Designing schemas for optimal performance...',
+    author: 'Emily Brown',
+    comments: [
+      { user: 'Kevin', text: 'Invaluable insights!' },
+      { user: 'Lily', text: 'Well-structured explanations.' }
+    ],
+    metadata: { views: 700, likes: 65 }
+  }
+]
+shop> db.comments.find({"metadata.views" : {$gt:1200}})
+
+in this we can perform more complex action $all and $elemMatch
+
+shop> db.comments.find({"comments.user" : {$all:["Alice","Vinod"]}})
+[
+  {
+    _id: 7,
+    title: 'Introduction to MongoDB',
+    content: 'MongoDB is a popular NoSQL database...',
+    author: 'Vinod Thapa',
+    comments: [
+      { user: 'Alice', text: 'Awesome article!' },
+      { user: 'Vinod', text: 'Thanks for sharing.' }
+    ],
+    metadata: { views: 1000, likes: 70 }
+  }
+]
+
+shop> db.comments.find({"comments" :{$elemMatch:{user:"Alice",text:"Awesome article!"}}}) or shop> db.comments.find({"comments.user":"Alice", "comments.text":"Awesome article!"})
+[
+  {
+    _id: 7,
+    title: 'Introduction to MongoDB',
+    content: 'MongoDB is a popular NoSQL database...',
+    author: 'Vinod Thapa',
+    comments: [
+      { user: 'Alice', text: 'Awesome article!' },
+      { user: 'Vinod', text: 'Thanks for sharing.' }
+    ],
+    metadata: { views: 1000, likes: 70 }
+  }
+]
+
+
+Update Operation:
+
+updateOne() and updateMany()
+Removing and renaming fields
+Adding, removing items from array
+Updating embedded documents
+
+This updateOne and updateMany only update fields value $set
+db.collectionName.updateOne(
+{ filter },
+{ $set: { existingField: newValue, newField: "new value", // ... }, }
+);
+shop> db.products.updateOne({_id: ObjectId('64c23601e32f4a51b19b926c')},{$set:{"isFeatured":false}})
+shop> db.products.updateMany({price:200},{$set:{price : 250}})
+
+rename $rename
+shop> db.products.updateOne({_id: ObjectId('64c23601e32f4a51b19b926c')},{$rename:{category:"categories"}})
+
+delete field $unset
+shop> db.products.updateOne({_id: ObjectId('64c23601e32f4a51b19b926c')},{$unset:{"isFeatured":1}}) (1 means to remove)
+
+to add field $set
+shop> db.products.updateOne({name: 'Awesome Rubber Shirt'},{$set:{userName:"AP Dillon"}})
+{
+    _id: ObjectId('64c23f13f8ffc4957dc4f079'),
+    name: 'Awesome Rubber Shirt',
+    company: ObjectId('64c23350e32f4a51b19b9236'),
+    price: 250,
+    colors: [ '#725360' ],
+    image: '/images/product-Recycled.png',
+    category: ObjectId('64c2342de32f4a51b19b9250'),
+    isFeatured: false,
+    __v: 0,
+    userName: 'AP Dillon'
+  }
+
+Updating arrays and Embedded Documents
+
+$push
+shop> db.comments.updateOne({_id:1},{$push:{comments:{user:"Eva",text:"Subscribe"}}})
+[
+  {
+    _id: 1,
+    title: 'Introduction to MongoDB',
+    content: 'MongoDB is a popular NoSQL database...',
+    author: 'John Doe',
+    comments: [
+      { user: 'Alice', text: 'Great article!' },
+      { user: 'Bob', text: 'Thanks for sharing.' },
+      { user: 'Eva', text: 'Its beatifull!' },
+      { user: 'jessy' },
+      { user: 'Eva', text: 'Subscribe' }
+    ],
+    metadata: { views: 1000, likes: 50 }
+  }
+]
+
+$pop this will pop at the end of array only
+shop> db.comments.updateOne({_id:1},{$pop:{comments:1}})
+[
+  {
+    _id: 1,
+    title: 'Introduction to MongoDB',
+    content: 'MongoDB is a popular NoSQL database...',
+    author: 'John Doe',
+    comments: [
+      { user: 'Alice', text: 'Great article!' },
+      { user: 'Bob', text: 'Thanks for sharing.' },
+      { user: 'Eva', text: 'Its beatifull!' },
+      { user: 'jessy' }
+    ],
+    metadata: { views: 1000, likes: 50 }
+  }
+]
+
+to update the inner field of nested array
+shop> db.comments.updateOne({_id:1,"comments.user":"Alice"},{$set:{"comments.$.text" : "bhaevesh is awsome"}}) ($ is referrece to the filter id 1 and comments.user = alice)
+[
+  {
+    _id: 1,
+    title: 'Introduction to MongoDB',
+    content: 'MongoDB is a popular NoSQL database...',
+    author: 'John Doe',
+    comments: [
+      { user: 'Alice', text: 'bhaevesh is awsome' },
+      { user: 'Bob', text: 'Thanks for sharing.' },
+      { user: 'Eva', text: 'Its beatifull!' },
+      { user: 'jessy' }
+    ],
+    metadata: { views: 1000, likes: 50 }
+  }
+]
+
+Delte a single document
+db.collectionName.deleteOne({ filter });
+shop> db.comments.deleteOne({_id:1})
+shop>db.sales.deleteMany({ price: 55 });
+
+Indexes
+
+Indexes are specialized data structures that optimize data retrieval speed in
+MongoDB.
+Indexes store a fraction of data in a more searchable format.
+They enable MongoDB to locate data faster during queries.
+Indexes are separate from collections and multiple indexes can exist per
+collection.
+Faster Querying: Indexes
+drastically accelerate data
+retrieval, particularly for large
+collections.
+Efficient Sorting: Indexes
+facilitate rapid sorting based
+on specific fields
+Improved Aggregation:
+Aggregation operations
+become more efficient with
+optimized indexes.
+Indexing on Multiple Fields:
+Complex queries can be
+executed efficiently by utilizing
+multiple fields in indexes.
+
+Use explain() method to understand query execution in detail.
+shop> db.comments.find({_id: 1}).explain()
+shop> db.comments.find({_id: 1}).explain("executionStats")
+
+managing index
+
+db.products.createIndex({ field: 1 });
+(1) for storing indexes in ascending order.
+(-1) for storing indexes in descending order.
+
+db.collection.getIndexes();
+_id is a default index.
+
+db.collection.dropIndex({ field: 1 });
+db.collection.dropIndex(“index_name”);
+
+Unique and Text Indexes
+db.collection.createIndex({ field: 1 }, { unique: true });
+db.collection.createIndex({ field: "text" });
+db.collection.find({ $text: { $search: "keyword" } });
+Searching using index is faster than $regex searching.
+db.products.find({ field: { $regex: "air" } })
+
+
+
+
+
+shop> db.products.aggregate([{$match:{company:'64c23350e32f4a51b19b9243'}}])
+shop> db.products.aggregate([{$group:{_id:"$company",totalProducts:{$sum:1}}}])
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

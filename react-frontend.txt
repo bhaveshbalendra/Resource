@@ -1,0 +1,69 @@
+npx create-react-app my-app (latest version)
+npm init react-app my-app (older)
+yarn create react-app my-app
+npx create-react-app my-app --template typescript
+
+or 
+
+npm install -g create-react-app -> create-react-app my-app
+npm uninstall -g create-react-app
+
+npm start 
+yarn start
+
+-----------------------------------------------------
+
+npm create vite@latest
+yarn create vite
+
+npm create vite@latest my-ts-app -- --template typescript
+yarn create vite my-typescript-app --template typescript
+
+npm start 
+yarn start
+Manual Installation cli
+npm install -D vite
+<p>Hello Vite!</p> -> index.html
+vite ->in termial
+http://localhost:5173 ->served
+
+yarn 
+
+yarn install -> install packages from package.json
+yarn add packake-name -> install package
+yarn add [package-name] --dev
+yarn upgrade -> update all dependenis
+yarn run build
+yarn remove package
+yarn list
+yarn version
+yarn init -y -> package json
+yarn add express --dev
+yarn add express -D
+yarn add package1 package2 package3 --dev
+
+
+npm
+npm version
+npm update
+npm install
+npm uninstall
+npm init
+npm ls
+npm i -d express // not vaild
+npm i express -d  // not valid
+npm i express -D
+npm i -D express
+npm i express --save-dev
+
+file
+echo "" > index.html -> create new file
+del index.html -> delete
+rmdir foldername ->d Write A not a
+rmdir -r foldernam -> remove file recursive same as rmdir folername
+code file.html -> open file
+mkdir namefolder
+cls -> clean terminal
+ctrl+pageup -> termail switch
+ctrl+w -> tab close in vs code
+

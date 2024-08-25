@@ -1,87 +1,59 @@
-function App() {
-  // type Identity = <T>(arg: T) => T;
-  // type Greet = (name: string, age?: number) => string;
-  // type Obj = {
-  //   age: number;
-  //   (x: number, y: number) : number;
-  //   add(x: number, y: number): number;
-  //   person:(x: number, y: number) => number;
-  //   add(x: number, y: number): number;
-  // };
-  // type Obj = {
-  //   age: number;
-  //   person:(x: number, y: number) => number;
-  // };
+1)You can define a function that works with any data type using generics
 
-  // interface Adder {
-  //   (x: number, y: number): number;
-  // }
-  // const add: Adder = (x, y) => x + y;
-
-  // function logAndReturn<Type>(value: Type): Type {
-  //   return value;
-  // }
-
-  // function logAnd<T>(value: T): string {
-  //   return "Hello";
-  // }
-  // const FunAdd = function <T>(value: T): number {
-  //   return 123;
-  // };
-
-  // const identity: Identity = function (arg) {
-  //   return arg;
-  // };
-
-  // const greet: Greet = function (name, age) {
-  //   return "hello";
-  // };
-
-  // interface Adder {
-  //   name:string;
-  //   age:number;
-  //   (x: number, y: number) => number;
-  // }
-
-  // const add: Adder = (x, y) => x + y;
-
-  // type Adder = (x: number, y: number) => number;
-
-  // const add: Adder = (x, y) => x + y;
-  // interface Obj {
-  //   age: number;
-  //   add: (x: number, y: number) => number;
-  // }
-  // const obj: Obj = {
-  //   age: 10,
-  //   add: (x, y) => x + y,
-  // };
-
-  // interface Obj {
-  //   (x: number, y: number): number;
-  // }
-  // type Obj2 = (x: number, y: number) => number;
-
-  // const name:Obj =(x,y) => {
-  //   return 1;
-  // }
-
-  const identity = <T extends {}>(arg: T): T => {
-    return arg;
-  };
-
-  let result1 = identity<number>(42);
-
-  return (
-    <div>
-      <p>hello</p>
-    </div>
-  );
+function identity<T>(value: T): T {
+  return value;
 }
 
+const number = identity<number>(5);  // number is 5
+const string = identity<string>("Hello");  // string is "Hello"
 
-//useState
+2. Generic Components in React
+
+The React.FC type (or React.FunctionComponent) is a type for the entire component, not just the return type. When you use React.FC, you're typing the component itself, not just its return value.
+
+const App: React.FC = () => {
+  return <div>App</div>;
+};
 
 
+export default function App():JSX.Element {
+  return (
+    <div>App</div>
+  )
+}
 
-export default App;
+useState()
+
+const [data, setData] = useState<Data | undefined>(undefined);
+const [selectedItem, setSelectedItem] = useState<string | null>(null);
+const [value, setValue] = useState<string | number>('');
+const [items, setItems] = useState<string[]>([]); // An array of strings
+
+
+Type Assertions
+
+Type assertion in TypeScript is a way to tell the compiler what the specific type of a value is, overriding its inferred or declared type. This is useful when you know more about the value than TypeScript does, and you want to narrow or change the type to match your expectations.
+
+let someValue: any = "this is a string";
+let strLength: number = (<string>someValue).length;
+
+let someValue: any = "this is a string";
+let strLength: number = (someValue as string).length;
+
+
+const inputElement = document.getElementById("myInput") as HTMLInputElement;
+console.log(inputElement.value); // Accessing the 'value' property
+
+
+Event
+event: ChangeEvent<HTMLInputElement> event.target.value radio, <select>,text,textarea
+event: ChangeEvent<HTMLInputElement> event.target.checked checkbox
+event: ChangeEvent<HTMLSelectElement> event.target.value
+event: FormEvent<HTMLFormElement> onSubmit onReset
+
+MouseEvent<HTMLButtonElement> onClick,onDoubleClick,onMouseEnter,onMouseLeave
+KeyboardEvent<HTMLInputElement> onKeyDown onKeyUp onKeyPress
+event: FocusEvent<HTMLInputElement> onFoucus onBlur
+
+styles:React.CSSProperties <div style={props.styles}>
+

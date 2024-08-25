@@ -1,3 +1,5 @@
+Schema === database
+
 system cls; -> clean terminal
 show databases; 
 create database school_db;
@@ -5,4 +7,19 @@ use school_db;
 select database(); -> check on which database
 drop database test_db;
 
+Create table
+->create table students (id INT, name VARCHAR(100));
+->show tables; 
+->desc students;
 
+Insert Data
+->insert into students values (100,"bhavesh");
+
+->insert into students(name,id) values ("vipul",20),("raja",20); //if order is changed and insert multiple data
+
+Select Cloums
+-> slect * from sudents;
+-> select id,name from students;
+-> select name from students;
+
+->select * from students where id=200;

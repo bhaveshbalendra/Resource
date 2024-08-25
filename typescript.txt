@@ -1,0 +1,124 @@
+Type Annotation -> explicit declare type
+Type Inference -> automatically give no need to mention
+Types -> number,string,bigint,boolean,any,unknow,never
+
+function -> 
+
+function Example(name:string,age:number) {}
+const Example = (name?: string, age: number=1) => {};
+Example("Bhavesh",23)
+
+default parameter
+option parameter
+
+
+Array 
+
+const arr:number[] = [1,2,3,4,5,6]
+
+Object
+
+const person:{name:string,age:number} = {
+  name:"bhavesh",age:23
+}
+
+
+type Alias to reuse type 
+
+type Greet = (name: string, age?: number) => string;
+
+type Obj = {
+     age: number;
+     (x: number, y: number) : number;
+     add(x: number, y: number): number;
+     person:(x: number, y: number) => number;
+     add(x: number, y: number): number;
+   };
+
+type Obj = {
+     age: number;
+     person:(x: number, y: number) => number;
+   };
+
+interface Adder {
+     (x: number, y: number): number;
+   }
+
+   const add: Adder = (x, y) => x + y;
+
+method signature
+type Obj = {
+     age: number;
+     person:(x: number, y: number) => number; // this type sigature
+   };
+
+const Example:(name:string,age:number) => string = (name:string,age:number):string => {};
+const Example:(student:Student) => string = (student:Student):string => {};
+
+
+
+enum Roles {
+user ="user",
+admin="admin"
+}
+
+type loginDetails = {
+role:Roles
+}
+
+const user1:loginDetails = {
+role:Roles.admin
+}
+
+Tuples
+fixed size array order matter 
+define
+type PersonInfo = [string,number,boolean]
+const person1:PersonInfo = ["vinod",23,true]
+
+Union
+function Example(name:string | number,age:number | string):string | number {}
+
+type EmployeeDetails = Person | Employee
+in this Person and Emloyee property can be given but one should have all property of on type if other is incomplete it will work
+
+
+Intersection 
+we have to write both object property 
+type EmployeeDetails = Person & Employee
+
+
+Generics allow you to create reusable components or fuctions work with multiple data type
+
+
+   type Identity = <T>(arg: T) => T;
+
+
+   function logAndReturn<Type>(value: Type): Type {
+     return value;
+   }
+
+   function logAnd<T>(value: T): string {
+     return "Hello";
+   }
+   const FunAdd = function <T>(value: T): number {
+     return 123;
+   };
+
+
+  const identity = <T extends {}>(arg: T): T => {
+    return arg;
+  };
+
+  let result1 = identity<number>(42);
+
+
+function identity<T>(value: T): T {
+  return value;
+}
+
+const number = identity<number>(5);  // number is 5
+const string = identity<string>("Hello");  // string is "Hello"
+
+
+

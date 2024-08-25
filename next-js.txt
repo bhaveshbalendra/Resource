@@ -1,4 +1,11 @@
-not-found.tsx is the page on app folder for coustome not found name should be exactly same on nested folder can also be used
+-Dynamic Routes-
+using square bracket -> [userId]
+
+-CatchAllSegments-
+[...slug]
+eg: if i have folder structure docs/[...slug]/page.tsx this will map all the route to page.tsx of slug folder
+
+not-found.tsx is the page on app folder for custom not found name should be exactly same on nested folder can also be used
 
 import {notFound} from "next/navigation"
 if() {
@@ -68,4 +75,15 @@ parallel routes
 using slot @foldername
 this slot are passed to its corresponding layout.tsx file
 independent routes ,error ,loading,sub navigation,
+navigaton with route
 
+-Handle Unmatched Routes-
+
+The default.tsx file is nextjs serves as a fallback to render content when the same framework cannot retrieve the slot acting state from the current URL
+
+Navigation from the UI in the case of Navigator within a UI next.js details the previous active state of a slot regardless of change in URL
+
+page reader :
+Next JS immediately search for the default.tsx file within each unmatched slot 
+The presence of this file is critical as it provides the default content that next JS will render in the user interface
+ if the default.tsx file is missing in any of the unmatched slots for the current route next js will render 404 error

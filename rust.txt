@@ -1,0 +1,84 @@
+rustup
+rustc --version
+cargo --version
+
+cargo build -> to compile
+
+to run and compile ->cargo run
+
+cargo run --release -> optimized
+
+semicolon complosory
+
+in cmd 
+cargo new first_rust
+
+file folder snake_case : hello_world
+
+----
+let num:u8 = 55;
+integer types
+u -> positive num
+i ->pos and negtiv can hold
+
+formula 2^n-1
+u8 -> 255
+u16 -> 640000
+u32 -> 4billion
+u64
+
+println!("This is stored in num {}",num); 
+
+-----
+mutable 
+to make variable mutable we use mut
+let mut num:u16 =256;
+
+string
+
+let name:&str = "Bhavesh"; not mutable &str
+
+fn main() {
+    let mut name:String = String::from("bhavesh is my name");
+    name.push_str(" added string");
+    println!("This is stored in num {}",name);
+}
+
+
+tupes
+
+fn main() {
+    let emp_info:(&str,u8) = ("Bhavesh",22);
+
+    let emp_name = emp_info.0;
+    let emp_age = emp_info.1;
+
+    let (empoyee_name,empoyee_age) = emp_info;
+
+    println!("Employee name is : {} and age is: {}",emp_name,emp_age);
+    println!("Employee name is : {} and age is: {}",empoyee_name,empoyee_age);
+
+}
+
+
+function
+fn main() {
+   print_value(5);
+}
+
+fn print_value(item:u8) {
+    println!("{}",item)
+}
+
+fn main() {
+    let num1:u8 = 10;
+    let num2:u8 = 20;
+    let result = add(num1,num2);
+    println!("The sum of num1 and num2 is {}",result);
+
+}
+
+fn add(item1:u8,item2:u8)->u8 {
+    return item1 + item2;
+}
+

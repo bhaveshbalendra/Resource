@@ -1,5 +1,7 @@
 Schema === database
 
+char,varchar(100),int,bool,bigint,float,double,date,time,datetime,timestamp,year,textimage,
+
 system cls; -> clean terminal
 show databases; 
 create database school_db;
@@ -17,9 +19,19 @@ Insert Data
 
 ->insert into students(name,id) values ("vipul",20),("raja",20); //if order is changed and insert multiple data
 
-Select Cloums
--> slect * from sudents;
--> select id,name from students;
+Select Columns
+-> select * from students;
+-> select id, name from students;
 -> select name from students;
 
 ->select * from students where id=200;
+
+Update
+mysql> update students set name="bhavesh" where name="vipul";
+it will give error in big db because it should have key
+
+Delete data
+mysql> delete from students where id=200;
+
+Delete Table
+mysql> drop table students;

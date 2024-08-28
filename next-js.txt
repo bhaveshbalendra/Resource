@@ -87,3 +87,29 @@ page reader :
 Next JS immediately search for the default.tsx file within each unmatched slot 
 The presence of this file is critical as it provides the default content that next JS will render in the user interface
  if the default.tsx file is missing in any of the unmatched slots for the current route next js will render 404 error
+
+
+Intercepting Routes Conventions
+folder same place 
+(.)f2
+f2
+
+Route Handlers
+route.ts
+make folder api and put it in
+export async function GET() {
+  return Response.json(comments);
+}
+export async function GET() {
+    
+  return new Response("GET  handler");
+}
+
+it has request and context as paramaeter GET PATCH DELETE
+
+
+caching in route handlers 
+auto cached in et method
+
+
+

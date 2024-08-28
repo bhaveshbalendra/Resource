@@ -82,3 +82,14 @@ fn add(item1:u8,item2:u8)->u8 {
     return item1 + item2;
 }
 
+arrays fixed size
+
+ let a1:[i32;3] = [10,30,40];
+
+ println!("{:?}",a1);
+
+ for elem in a1.iter() {
+    println!(" {}",elem);
+ }
+
+Vector dynamic

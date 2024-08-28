@@ -1,0 +1,41 @@
+Extras -> ctrl+H out line
+edit -> preference -> general
+
+window -> workspace -> essentials reset workspace or panel to default
+
+ctrl + G group
+
+ctrl + T transform then press enter edit-> free transform (press shift for expect ratioo) 
+(press alt it will increase from center) (right click for more options like perpertive ditort and warp)
+
+ctrl + j copy layer of or drap to + 
+three types of layers pixels vector and smart object
+
+
+raster -> on resize image go distorted eg when make small the normal size image get distorte
+
+so to overcome this 
+
+make image or layer smart object 
+right click on layer and make it 
+
+background color 
+alt+backspace -> foregound
+clt+backspace -> background
+
+selection 
+press space
+press shift 
+can stack section to make different color subtract intersect
+ctrl + D to deslect
+backspace for magnatic lasso to delect one point back
+
+
+brush 
+increase size [ or ]
+press shift to draw line from one point to other
+the plus sign is not be on other the slection 
+
+eraser
+work on raster only
+eraser is distructive edit but mask is not

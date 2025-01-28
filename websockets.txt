@@ -1,0 +1,61 @@
+socket -> client
+io->server all clients
+emit->this event (data) send  .emit(event,id)
+on->this event (data) receive .on(event,(message) => { cl(message)})
+
+
+socket.on(event,() => {})
+socket.emit(btn,4)
+socket.brodcast.emit({},()=>{}) send to all except this user
+
+personal message concept of room
+socket.to(ReciverUserID).emit()
+
+to send in group
+socket.join(roomName)
+
+client
+
+import { io } from "socket.io-client";
+
+function App() {
+  const socket = io("http://localhost:4000");
+  socket.on("connect", () => {
+    console.log("Connected to server", socket.id);
+  });
+  return <div>App</div>;
+}
+
+export default App;
+
+server
+
+import express from "express";
+import { Server, Socket } from "socket.io";
+import { createServer } from "http";
+import cors from "cors";
+
+const PORT = 4000;
+const app = express();
+const server = createServer(app);
+const io = new Server(server, {
+  cors: {
+    origin: "http://localhost:5173",
+    credentials: true,
+    methods: ["GET", "POST"],
+  },
+});
+
+app.use(cors());
+app.get("/", (req, res) => {
+  res.send("Server Socket Io");
+});
+
+io.on("connection", (socket) => {
+  console.log("User Connected");
+  console.log("Id", socket.id);
+});
+
+server.listen(PORT, () => {
+  console.log(`Server started at ${PORT}`);
+});

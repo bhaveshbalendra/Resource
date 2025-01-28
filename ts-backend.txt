@@ -13,7 +13,13 @@ ts-node app.ts
 nodemon app.ts (server)
 npm start
 
+npm run build or npx build
 
+"scripts": {
+    "start": "node dist/index.js",
+    "dev": "ts-node-dev --respawn --transpile-only --files src/index.ts",
+    "build": "npm install && tsc"
+  },
 
 //tsc index.ts -> tsc index only one compile if index.ts all at once
 //node index

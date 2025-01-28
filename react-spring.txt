@@ -1,0 +1,48 @@
+import { useState } from "react";
+import { animated, useSpring } from "@react-spring/three";
+const Scene = () => {
+  const [click, setClick] = useState(false);
+  const { scale, color } = useSpring({
+    from: { scale: click ? 1 : 2, color: click ? "red" : "pink" },
+    to: { scale: click ? 2 : 1, color: click ? "blue" : "yellow" },
+  });
+  function handleClick() {
+    setClick(!click);
+  }
+  console.log("click");
+  return (
+    <>
+      <animated.mesh onClick={handleClick} scale={scale}>
+        <boxGeometry args={[1, 1, 1]} />
+        <animated.meshBasicMaterial color={color} />
+      </animated.mesh>
+    </>
+  );
+};
+
+export default Scene;
+
+
+=>Imperative API (no rerender)
+import { animated, useSpring } from "@react-spring/three";
+const Scene = () => {
+  const [spring, api] = useSpring(() => ({
+    from: { x: 1 },
+  }));
+  function handleClick() {
+    api.start({
+      to: { x: spring.x.get() === 1 ? 0 : 1 },
+    });
+  }
+  console.log("click");
+  return (
+    <>
+      <animated.mesh onClick={handleClick} position-x={spring.x}>
+        <boxGeometry args={[1, 1, 1]} />
+        <animated.meshBasicMaterial />
+      </animated.mesh>
+    </>
+  );
+};
+
+export default Scene;

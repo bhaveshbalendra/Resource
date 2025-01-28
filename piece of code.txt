@@ -1,0 +1,9 @@
+tailwind css
+for image -> object-contain shrink-0 self-stretch my-auto w-6 aspect-square
+
+
+react-libraries :
+react-email
+resend mail
+zod
+next-auth or authjs

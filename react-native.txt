@@ -1,0 +1,45 @@
+      
+1)Images
+<Image
+   style={styles.tinyLogo}
+   source={require('@expo/snack-static/react-native-logo.png')}
+   />
+<Image
+  style={styles.tinyLogo}
+  source={{
+  uri: 'https://reactnative.dev/img/tiny_logo.png',
+  }}
+/>
+
+
+2)scrollview
+<ScrollView contentContainerStyle={styles.scrollViewContent}>
+
+
+
+3)<TextInput
+  style={styles.input}
+  placeholder="Enter your todo"
+  value={text}
+  onChangeText={setText}
+  onSubmitEditing={handleAddTodo} // Trigger on "Enter" or "Submit"
+  />
+      
+
+4)<Button title="Add Todo" onPress={handleAddTodo} />
+
+
+5)Style
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  tinyLogo: {
+    width: 50,
+    height: 50,
+  },
+  logo: {
+    width: 66,
+    height: 58,
+  },
+});

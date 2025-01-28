@@ -1,0 +1,143 @@
+
+=> TextureLoader and LoadingManager
+
+const loadingManager = new THREE.LoadingManager();
+loadingManager.onStart = () => {
+  console.log("Start");
+};
+loadingManager.onLoad = () => {
+  console.log("On Load");
+};
+loadingManager.onProgress = () => {
+  console.log("Progress");
+};
+
+loadingManager.onError = () => {
+  console.log("On Error");
+};
+
+const textureLoader = new THREE.TextureLoader(loadingManager);
+const colorTexture = textureLoader.load("/texture/color.jpg");
+const material = new THREE.MeshBasicMaterial(colorTexture);
+
+or
+
+const texture = new THREE.TextureLoader().load('textures/land_ocean_ice_cloud_2048.jpg' ); 
+const material = new THREE.MeshBasicMaterial( { map:texture } );
+
+or
+
+const textureLoader = new THREE.TextureLoader(loadingManager);
+const colorTexture = textureLoader.load("/texture/color.jpg");
+const material = new THREE.MeshBasicMaterial();
+material.map=colorTexture
+
+
+path is "C:\Users\bhojr\Desktop\FIles\TextureProject\static\texture\color.jpg"
+it should be relative /texture/color.jpg
+
+types of textures
+bump ,color, displacementMap, normal
+
+=>Materials
+
+1)MeshBasicMaterial
+shader are used to color materail
+
+const textureLoader = new THREE.TextureLoader();
+const colorTexture = textureLoader.load("/texture/color.jpg");
+
+const geometry = new THREE.PlaneBufferGeometry(1, 1);
+const material = new THREE.MeshBasicMaterial();
+material.map = colorTexture;
+material.wireframe = true;
+material.color = new THREE.Color("skyblue");
+material.transparent = true;
+material.opacity = 0.2;
+material.side = THREE.FrontSide;
+material.side = THREE.BackSide;
+material.side = THREE.DoubleSide;
+material.visible = false;
+
+2) MeshDepthMaterial
+entire will be painted grey
+closer the object to camera more white and far are black
+
+const geometry = new THREE.TorusGeometry(0.3, 0.2, 32, 32);
+const material = new THREE.MeshDepthMaterial();
+
+3)MeshNormalMaterial
+this will show purple where light is and backside is pink or if i look to the front it will be purple and sides and back are pink
+this will be used we use of lights
+
+4)MeshMatcapMaterial 
+take image of mathcap and apply as material
+this take image of matcap texture is that it takes the colors on the texture and then distributes based on normal vector
+this give as the lighting behavior
+
+now we will se material which need light
+1) MeshLamberMaterial
+
+ const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+const pointLight = new THREE.PointLight(0xffffff, 0.5);
+pointLight.position.set(2, 2, 2);
+scene.add(ambientLight, pointLight);
+
+2)MeshPhonegMaterail
+simler to meshlambermaterail
+more properties
+like shininess and specular
+
+3)MeshToonMaterial
+
+4)MeshStandardMaterial
+its combination of meshphongmaterial and meshtoonmaterial 
+properties like metalness and roughness
+
+add texture to materail
+1)MeshStandardMaterial
+a)bumpMap
+const textureLoader = new THREE.TextureLoader();
+const bumpTexture = textureLoader.load("/texture/bump.jpg");
+
+const geometry = new THREE.PlaneBufferGeometry(1,1);
+const material = new THREE.MeshStandardMaterial();
+material.map = colorTexture;
+material.bumpMap = bumpTexture;
+
+bumbMap texture create bumb in image were color is white or soild black will not do that
+
+b)DisplacementTexture
+const geometry = new THREE.PlaneBufferGeometry(1, 1,12,12);
+const material = new THREE.MeshStandardMaterial();
+material.map = colorTexture;
+material.displacementMap = displacementTexture
+this will move the vertex to perpendicalar up where white is more
+
+
+=> Loader
+1)Texture Loader
+for images
+
+2)CubeTextureLoader
+const cubeTextureLoader = new THREE.CubeTextureLoader();
+const envTexture = cubeTextureLoader.load([
+  "/texture/env/px.png",
+  "/texture/env/nx.png",
+  "/texture/env/py.png",
+  "/texture/env/ny.png",
+  "/texture/env/pz.png",
+  "/texture/env/nz.png",
+]);
+
+scene.background = envTexture;
+
+const geometry = new THREE.SphereBufferGeometry(0.5, 32, 32);
+const material = new THREE.MeshStandardMaterial();
+material.metalness = 0.9;
+material.roughness = 0.1;
+material.envMap = envTexture;
+
+Particals
+ 
+

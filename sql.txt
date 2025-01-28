@@ -1,3 +1,7 @@
+to start in cmd
+mysql -u root -p press enter
+then password
+
 Schema === database
 
 char,varchar(100),int,bool,bigint,float,double,date,time,datetime,timestamp,year,textimage,

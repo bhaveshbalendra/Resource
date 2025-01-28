@@ -1,0 +1,1110 @@
+bufferGeomety
+A representation of mesh, line, or point geometry. Includes vertex positions, face indices, normals, colors, UVs, and custom attributes within buffers, reducing the cost of passing all this data to the GPU.
+
+
+  const positionArray = new Float32Array([0, 0, 0, 1, 0, 1, 1, 0, 0]);
+ <bufferGeometry>
+          <bufferAttribute
+            attach="attributes-position"
+            count={3}
+            itemSize={3} // 1,1,1
+            array={positionArray}
+          />
+        </bufferGeometry> 
+
+
+
+
+ const texture = useLoader(THREE.TextureLoader, "./img/snow.jpg");
+
+  const verticesAmount = 2000;
+  const positionArray = new Float32Array(verticesAmount * 3);
+
+  for (let i = 0; i < verticesAmount * 3; i++) {
+    positionArray[i] = (Math.random() - 0.5) * 10.0;
+  }
+  <points ref={particles}>
+      <bufferGeometry>
+        <bufferAttribute
+          attach="attributes-position"
+          count={positionArray.length / 3} //should be divided by three
+          itemSize={3}
+          array={positionArray}
+        />
+      </bufferGeometry>
+      <pointsMaterial
+        size={0.06}
+        alphaMap={texture}
+        transparent
+        depthTest={false}
+      />
+    </points>
+
+
+groupRef.current.rotation.y = 3.14 * (1 / 3);
+ planeRef.current.rotation.y += delta;
+ state.camera.position.x = Math.sin(state.clock.elapsedTime);
+
+   groupRef.current.children.forEach((child, index) => {
+          const initialOffset = index * Math.PI * 0.5;
+          child.position.x = Math.sin(state.clock.elapsedTime + initialOffset); // Animate with an offset
+        });
+
+=>Canvas
+
+import { Canvas } from "@react-three/fiber";
+
+const App = () => {
+  return (
+    <div className="container">
+      <Canvas>
+        <group position={-3}>
+          <mesh position-x={-3} rotation-x={Math.PI * 0.5} scale={[2, 2, 2]}>
+            <torusKnotGeometry />
+            <meshNormalMaterial />
+          </mesh>
+          <mesh position={[1, 1, 1]} scale={1.3}>
+            <torusKnotGeometry />
+            <meshNormalMaterial />
+          </mesh>
+        </group>
+      </Canvas>
+    </div>
+  );
+};
+
+export default App;
+
+
+css
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+html,
+body,
+#root {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
+
+args and properties
+
+=>OrbitalControls useRef ,useThree and useFrame
+
+Plane.tsx
+// src/components/Plane.tsx
+import { useFrame, useThree } from "@react-three/fiber";
+import { useRef } from "react";
+import * as THREE from "three";
+
+export default function Plane() {
+  const planeRef = useRef<THREE.Mesh>(null);
+  const boxRef = useRef<THREE.Mesh>(null);
+  const { gl, camera } = useThree();
+
+  useFrame((_state, delta) => {
+    if (planeRef.current && boxRef.current) {
+      planeRef.current.rotation.y += delta;
+      boxRef.current.rotation.x += delta;
+    }
+  });
+
+  return (
+    <>
+      <orbitControls args={[camera, gl.domElement]} />
+      <mesh ref={planeRef} position-x={-4}>
+        <planeGeometry args={[2, 2]} />
+        <meshBasicMaterial color="red" side={THREE.DoubleSide} />
+      </mesh>
+      <mesh ref={boxRef} position-x={4}>
+        <boxGeometry args={[2, 2]} />
+        <meshNormalMaterial />
+      </mesh>
+    </>
+  );
+}
+
+App.tsx
+import { Canvas } from "@react-three/fiber";
+import Plane from "./components/Plane";
+
+const App = () => {
+  return (
+    <Canvas>
+      <Plane />
+    </Canvas>
+  );
+};
+
+export default App;
+
+types
+// src/types/orbitControls.d.ts
+import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
+import { ReactThreeFiber } from "@react-three/fiber";
+
+declare global {
+  namespace JSX {
+    interface IntrinsicElements {
+      orbitControls: ReactThreeFiber.Object3DNode<
+        OrbitControls,
+        typeof OrbitControls
+      >;
+    }
+  }
+}
+
+
+or
+
+Plane.tsx
+import { useFrame, extend, useThree } from "@react-three/fiber";
+import { useRef } from "react";
+import * as THREE from "three";
+import { OrbitControls } from "three/examples/jsm/controls/OrbitControls"; // Correct import path
+
+extend({ OrbitControls }); // Extend the OrbitControls
+
+function Plane() {
+  const planeRef = useRef<THREE.Mesh>(null);
+  const boxRef = useRef<THREE.Mesh>(null);
+  const { gl, camera } = useThree(); // important or gives
+
+  useFrame((state, delta) => {
+    if (planeRef.current && boxRef.current) {
+      planeRef.current.rotation.y += delta;
+      boxRef.current.rotation.x += delta;
+    }
+  });
+
+  return (
+    <>
+      {/* Add OrbitControls to control the camera */}
+      <orbitControls attach="orbitControls" args={[camera, gl.domElement]} />
+      <mesh ref={planeRef} position-x={-4}>
+        <planeGeometry args={[2, 2]} />
+        <meshBasicMaterial color="red" side={THREE.DoubleSide} />
+      </mesh>
+      <mesh ref={boxRef} position-x={4}>
+        <boxGeometry args={[2, 2]} />
+        <meshNormalMaterial />
+      </mesh>
+    </>
+  );
+}
+
+  const { gl, camera } = useThree(); // important or gives
+camera.postion.x = 2;
+
+or 
+
+useFrame((state,_) => {
+state.camera.postion.x=2;
+})
+
+export default Plane;
+
+in this orbitControl should used as camel case extend({ OrbitControls:OrbitControls }) this convert to camel case   <orbitControls attach="orbitControls" args={[camera, gl.domElement]} />
+
+
+or
+using drei Plane.tsx
+// src/components/Plane.tsx
+import { extend, useFrame, useThree } from "@react-three/fiber";
+import { useRef } from "react";
+import * as THREE from "three";
+import { OrbitControls } from "@react-three/drei";
+extend({ OrbitControls: OrbitControls });
+export default function Plane() {
+  const planeRef = useRef<THREE.Mesh>(null);
+  const boxRef = useRef<THREE.Mesh>(null);
+  const { gl, camera } = useThree();
+
+  useFrame((_state, delta) => {
+    if (planeRef.current && boxRef.current) {
+      planeRef.current.rotation.y += delta;
+      boxRef.current.rotation.x += delta;
+    }
+  });
+
+  return (
+    <>
+      <OrbitControls args={[camera, gl.domElement]} />
+      <mesh ref={planeRef} position-x={-4}>
+        <planeGeometry args={[2, 2]} />
+        <meshBasicMaterial color="red" side={THREE.DoubleSide} />
+      </mesh>
+      <mesh ref={boxRef} position-x={4}>
+        <boxGeometry args={[2, 2]} />
+        <meshNormalMaterial />
+      </mesh>
+    </>
+  );
+}
+in this OrbitControl should used as Pascel case   <OrbitControls attach="orbitControls" args={[camera, gl.domElement]} />
+
+=>Canvas properties eg camera
+there are three ways
+
+first
+import { Canvas } from "@react-three/fiber";
+import Plane from "./components/Plane";
+
+const App = () => {
+  return (
+    <Canvas camera={{ fov: 75, near: 0.1, far: 100, position: [3, 3, 3] }}>
+      <Plane />
+    </Canvas>
+  );
+};
+
+export default App;
+
+second
+Plane.tsx
+export default function Plane() {
+  const planeRef = useRef<THREE.Mesh>(null);
+  const boxRef = useRef<THREE.Mesh>(null);
+  const { gl, camera } = useThree();
+  camera.position.x = 20;
+
+  useFrame((state, delta) => {
+    console.log(state);
+    if (planeRef.current && boxRef.current) {
+      planeRef.current.rotation.y += delta;
+      boxRef.current.rotation.x += delta;
+    }
+  });
+
+third
+export default function Plane() {
+  const planeRef = useRef<THREE.Mesh>(null);
+  const boxRef = useRef<THREE.Mesh>(null);
+  const { gl, camera } = useThree();
+
+  useFrame((state, delta) => {
+    state.camera.position.x = Math.sin(state.clock.elapsedTime);
+    console.log(state);
+    if (planeRef.current && boxRef.current) {
+      planeRef.current.rotation.y += delta;
+      boxRef.current.rotation.x += delta;
+    }
+  });
+
+Summary of useThree Properties:
+gl: WebGLRenderer
+scene: The 3D scene
+camera: Active camera
+size: Canvas size (width, height)
+viewport: Viewport dimensions in world units
+clock: Clock for timing
+raycaster: Raycasting utility for mouse interaction
+mouse: Normalized mouse position
+events: Event handlers
+invalidate: Manual rendering invalidation
+set: Update canvas state
+get: Retrieve current scene state
+These properties give you access to everything you need to manipulate and interact with your 3D scene in react-three-fiber.
+
+Summary of Important Canvas Props:
+camera: Defines the camera settings (position, FOV, etc.).
+shadows: Enables or disables shadow rendering.
+gl: Customizes the WebGL renderer settings.
+dpr: Sets the device pixel ratio for rendering.
+onCreated: Callback after the scene is initialized.
+frameloop: Controls when the scene re-renders.
+orthographic: Switches to an orthographic camera.
+linear: Uses linear color space.
+flat: Disables gamma-corrected shading.
+invalidateFrameloop: Disables continuous rerendering.
+These props allow you to fine-tune the behavior, appearance, and performance of the canvas in your react-three-fiber application.
+
+
+=> Canvas args
+
+const App = () => {
+  return (
+    <Canvas
+      orthographic
+      camera={{ fov: 75, near: 0.1, far: 100, position: [3, 3, 3] }}
+    >
+      <Plane />
+    </Canvas>
+  );
+};
+
+orthographic do not use projection so two mesh with different z index will have same size by  orthographic={true}. by default its false to make it true orthographic or orthographic={true}
+
+apply background color
+
+a)
+   <Canvas
+      gl={{ antialias: true, alpha: true }}
+      camera={{ fov: 75, near: 0.1, far: 100, position: [3, 3, 3], zoom: 120 }}
+    >
+      <Plane />
+    </Canvas>
+
+then apply background color in css
+
+b)
+using   onCreated={createCanvasHandler} on canvas please dont put this outside of canvas and create a function which consiste of state like useframe and create function in jsx component
+you can change background color using state.
+
+const App = () => {
+  function createCanvasHandler(state: unknown) {
+    state.gl.setClearColor("cyan",0.5) // cyan -> bg color 0.5 is alph(0-1) is opacity
+  }
+
+  return (
+    <Canvas
+      gl={{ antialias: true, alpha: true }}
+      camera={{ fov: 75, near: 0.1, far: 100, position: [10, 10, 10] }}
+      onCreated={createCanvasHandler}
+    >
+      {/* <ambientLight intensity={0.5} /> Add ambient light */}
+      <Plane />
+      <axesHelper args={[4]} />
+      <gridHelper args={[10, 10, "pink", "red"]} />
+    </Canvas>
+  );
+};
+
+// Plane.tsx
+import { useFrame, useThree } from "@react-three/fiber";
+import { useRef } from "react";
+import * as THREE from "three";
+import { OrbitControls } from "@react-three/drei";
+
+export default function Plane() {
+  const planeRef = useRef<THREE.Mesh>(null);
+  const boxRef = useRef<THREE.Mesh>(null);
+  const { gl, camera } = useThree();
+
+  useFrame((state, delta) => {
+    state.camera.position.x = Math.sin(state.clock.elapsedTime) * 10; // Example movement
+    if (planeRef.current && boxRef.current) {
+      planeRef.current.rotation.y += delta;
+      boxRef.current.rotation.x += delta;
+    }
+  });
+
+  return (
+    <>
+      <OrbitControls args={[camera, gl.domElement]} />
+      <mesh ref={planeRef} position-x={-4} position-y={0} position-z={0}>
+        <planeGeometry args={[2, 2]} />
+        <meshBasicMaterial color="red" side={THREE.DoubleSide} />
+      </mesh>
+      <mesh ref={boxRef} position-x={4} position-y={0} position-z={0}>
+        <boxGeometry args={[2, 2, 2]} />
+        <meshNormalMaterial />
+      </mesh>
+    </>
+  );
+}
+
+c)
+gridhelper,axeshelper,state.gl.setClearColor
+// App.tsx
+import { Canvas } from "@react-three/fiber";
+import Plane from "./components/Plane";
+
+const App = () => {
+  function createCanvasHandler(state: {
+    gl: { setClearColor: (arg0: string, arg1: number) => void };
+  }) {
+    console.log(state);
+    state.gl.setClearColor("cyan", 0.5); // cyan -> bg color 0.5 is alph(0-1) is opacity
+  }
+
+  return (
+    <Canvas
+      camera={{ fov: 75, near: 0.1, far: 100, position: [10, 10, 10] }}
+      onCreated={createCanvasHandler}
+    >
+      {/* <ambientLight intensity={0.5} /> Add ambient light */}
+      <Plane />
+      <axesHelper args={[4]} />
+      <gridHelper args={[10, 10, "pink", "red"]} />
+    </Canvas>
+  );
+};
+
+export default App;
+
+=>useLoader
+import * as THREE from "three";
+import { useLoader, useThree } from "@react-three/fiber";
+import { OrbitControls } from "@react-three/drei";
+
+export default function Scene() {
+  const { gl, camera } = useThree();
+  const texture = useLoader(THREE.TextureLoader, "./images/1.jpg");
+  return (
+    <>
+      <OrbitControls args={[camera, gl.domElement]} />
+      <mesh>
+        <planeGeometry args={[2, 2, 2]} />
+        <meshBasicMaterial map={texture} side={THREE.DoubleSide} />
+      </mesh>
+    </>
+  );
+}
+
+=>gltf loader loads 3d model glb and gltf
+
+import { useLoader } from "@react-three/fiber";
+import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
+import { Group } from "three";
+
+const Scene = () => {
+   const model = useLoader(GLTFLoader, "./model/dog.glb") as { scene: Group }; //load 3d model
+
+  return (
+    <>
+      <ambientLight />
+      <mesh>
+        <meshBasicMaterial /> 
+        <boxGeometry />
+      </mesh>
+      <primitive object={model.scene} /> //this is the 3d model its material is meshStandard material which need light  
+    </>
+  );
+};
+
+export default Scene;
+
+problem here is mesh1 load first and primitive after that were primitive take lot of time so use lazy loader
+
+// src/three-extend.d.ts
+declare module "three/examples/jsm/loaders/GLTFLoader" {
+  import { Loader } from "three";
+
+  export class GLTFLoader extends Loader {
+    constructor();
+    load(
+      url: string,
+      onLoad: (gltf: any) => void,
+      onProgress?: (event: ProgressEvent) => void,
+      onError?: (event: ErrorEvent) => void
+    ): void;
+    parse(
+      data: ArrayBuffer | string,
+      path: string,
+      onLoad: (gltf: any) => void
+    ): void;
+  }
+}
+
+Suspense
+
+import { useLoader } from "@react-three/fiber";
+import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
+import { Group } from "three";
+
+export const Model = () => {
+  const model = useLoader(GLTFLoader, "./model/dog.glb") as { scene: Group };
+
+  return <primitive object={model.scene} />;
+};
+
+import { Suspense } from "react";
+import { Model } from "./Model";
+
+const Scene = () => {
+  return (
+    <>
+      <ambientLight />
+      <mesh>
+        <meshBasicMaterial />
+        <boxGeometry />
+        <Suspense>
+          <Model />
+        </Suspense>
+      </mesh>
+    </>
+  );
+};
+
+export default Scene;
+suspense solve of problem of load in same time mesh1 and model although mesh1 is loaded first 
+
+conditional  rendering
+
+import { Suspense } from "react";
+import { Model } from "./Model";
+
+const Scene = () => {
+  // Assert the type of model as { scene: Group }
+
+  return (
+    <>
+      <ambientLight />
+      {/* <mesh>
+        <meshBasicMaterial />
+        <boxGeometry />
+      </mesh> */}
+
+      <Suspense
+        fallback={
+          <mesh>
+            <meshBasicMaterial wireframe />
+            <boxGeometry />
+          </mesh>
+        }
+      />
+      <Model />
+    </>
+  );
+};
+
+export default Scene;
+fall back will run after loaded and when model gets read the it disappers
+
+=>Using drei loader useGLTF
+import { Group } from "three";
+import { useGLTF } from "@react-three/drei";
+
+export const Model = () => {
+  const model = useGLTF("./model/dog.glb") as { scene: Group };
+
+  return <primitive object={model.scene} />;
+};
+
+
+=> gltf to tsx or jsx
+to convert this go to the folder were gltf model reside and run the command (npx gltfjsx dog.gltf)
+this only conver to jsx if want tsx use chatgpt
+
+Change the export name in Dog.jsx and also change paths to dog.gltf in side jsx.there is {...props} this will be helpfull
+to added properties from <Bike position={[1, 0, 1]} /> import this in and file and use it use <directionLight/> 
+
+useRef to make responsive
+
+// all are in Bike.tsx
+  // Use useGLTF and cast the result to the custom GLTFResultType
+  const { nodes, materials } = useGLTF("./model/bike.gltf") as GLTFResultType;
+  const firstRef = useRef<THREE.Mesh>(null!);
+  const secondRef = useRef<THREE.Mesh>(null!);
+
+  useFrame((_, delta) => {
+    firstRef.current.rotation.y += delta * 3;
+    secondRef.current.rotation.z += delta * 3;
+  });
+
+  <meshref={secondRef}
+          geometry={nodes.B_Raios.geometry}
+          material={materials.Raio}
+          position={[-1.053, -1.178, 0.005]}
+        />
+<mesh
+            ref={firstRef}
+            geometry={nodes.Torus003.geometry}
+            material={materials.Pneu}
+          />
+
+useFrame runs after the first render continuously 
+
+to run only once use useEeffect
+ useEffect(() => {
+    firstRef.current.position.x = 1;
+  }, []);
+
+animation in drie
+
+useAnimation
+
+when console.log
+{ref: {…}, clips: Array(10), actions: {…}, names: Array(10), mixer: AnimationMixer}actions: ClickedOn: (...)Congratulate: (...)Embarrassed: (...)Hide: (...)Idle: (...)Pleased: (...)Show: (...)Travel: (...)Writing: (...)_CharacterSucceeds: (...)get ClickedOn: ƒ get()get Congratulate: ƒ get()get Embarrassed: ƒ get()get Hide: ƒ get()get Idle: ƒ get()get Pleased: ƒ get()get Show: ƒ get()get Travel: ƒ get()get Writing: ƒ get()get _CharacterSucceeds: ƒ get()[[Prototype]]: Objectclips: Array(10)0: AnimationClip {name: '_CharacterSucceeds', tracks: Array(186), duration: 2.5, blendMode: 2500, uuid: '3c9501b9-03b1-476b-82e7-d473e708816c'}1: AnimationClip {name: 'ClickedOn', tracks: Array(186), duration: 5.166666507720947, blendMode: 2500, uuid: '0abf919a-9c45-4d38-99ee-dacfb2e83bae'}2: AnimationClip {name: 'Congratulate', tracks: Array(186), duration: 3.3333332538604736, blendMode: 2500, uuid: 'ac65f12e-b093-4e5a-bfcb-bfcb7358faa8'}3: AnimationClip {name: 'Embarrassed', tracks: Array(186), duration: 7.041666507720947, blendMode: 2500, uuid: 'e807c697-f6a5-4fc4-aedd-f5e406c711a3'}4: AnimationClip {name: 'Hide', tracks: Array(186), duration: 3.25, blendMode: 2500, uuid: 'f014c63f-7ef9-4523-9b32-3872a7067a02'}5: AnimationClip {name: 'Idle', tracks: Array(186), duration: 3.1666667461395264, blendMode: 2500, uuid: '8a6e7035-0010-4037-aad7-93976cf3d116'}6: AnimationClip {name: 'Pleased', tracks: Array(186), duration: 5.958333492279053, blendMode: 2500, uuid: 'bf2e62e1-cdde-4090-bbd5-14cc666b34ef'}7: AnimationClip {name: 'Show', tracks: Array(186), duration: 5.291666507720947, blendMode: 2500, uuid: '1d9cba2d-2075-4252-9663-8294419deb66'}8: AnimationClip {name: 'Travel', tracks: Array(186), duration: 6.541666507720947, blendMode: 2500, uuid: '13074078-57ba-4e35-80db-bfcdae44fdaf'}9: AnimationClip {name: 'Writing', tracks: Array(186), duration: 3.0416667461395264, blendMode: 2500, uuid: '3f76867d-8af8-4097-90eb-0422cc438b53'}length: 10[[Prototype]]: Array(0)mixer: AnimationMixer {_root: undefined, _actions: Array(0), _nActiveActions: 0, _actionsByClip: {…}, _bindings: Array(0), …}names: (10) ['_CharacterSucceeds', 'ClickedOn', 'Congratulate', 'Embarrassed', 'Hide', 'Idle', 'Pleased', 'Show', 'Travel', 'Writing']ref: {current: Group}[[Prototype]]: Object
+
+main thing is action.ClickedOn and other this action can be method or if downloaded it has differen actions .
+this action has been defined in clips of array
+
+when consolelog model
+animations
+: 
+ [AnimationClip, AnimationClip, AnimationClip, AnimationClip, AnimationClip, AnimationClip, AnimationClip, AnimationClip, AnimationClip, AnimationClip]
+asset
+: 
+{generator: 'Khronos glTF Blender I/O v3.5.30', version: '2.0'}
+cameras
+: 
+[]
+materials
+: 
+{material_0: MeshStandardMaterial}
+nodes
+: 
+{Scene: Group, dog: _Object3D, root: _Object3D, GLTF_SceneRootNode: _Object3D, GLTF_created_0: _Object3D, …}
+parser
+: 
+GLTFParser {json: {…}, extensions: {…}, plugins: {…}, options: {…}, cache: {…}, …}
+scene
+: 
+Group {isObject3D: true, uuid: '6ee712b5-c07e-4876-a526-a0d1ce49c540', name: 'Scene', type: 'Group', parent: Scene, …}
+scenes
+: 
+[Group]
+userData
+: 
+{}
+[[Prototype]]
+: 
+Object
+
+animations have array of action
+
+
+import { Group } from "three";
+import { useGLTF, useAnimations } from "@react-three/drei";
+import { useEffect } from "react";
+
+export const Model = () => {
+  const model = useGLTF("./model/dog.glb") as { scene: Group };
+  const animation = useAnimations(model.animations, model.scene);
+  useEffect(() => {
+    animation.actions.Congratulate?.play();
+  }, []);
+  return <primitive object={model.scene} />;
+};
+
+
+=>Devtool Perf
+npm i -D r3f-perf
+import { Canvas } from "@react-three/fiber";
+import Scene from "./Scene";
+import { OrbitControls } from "@react-three/drei";
+import { Perf } from "r3f-perf";
+
+export default function App() {
+  return (
+    <Canvas>
+      <Scene />
+      <OrbitControls />
+      <Perf />
+    </Canvas>
+  );
+}
+
+=>Leva
+
+import { useControls } from "leva";
+
+const Scene = () => {
+  const levaControls = useControls({
+    Xpositon: 0,
+  });
+  return (
+    <>
+      <ambientLight />
+      <directionalLight />
+      <mesh position-x={levaControls.Xpositon}>
+        <boxGeometry />
+        <meshBasicMaterial />
+      </mesh>
+    </>
+  );
+};
+
+export default Scene;
+
+const Scene = () => {
+  const { position } = useControls({
+    position: {
+      value: {
+        x: 0,
+        y: 0,
+        z: 0,
+      },
+      max: 10,
+      min: -10,
+      step: 0.01,
+    },
+  });
+  return (
+    <>
+      <ambientLight />
+      <directionalLight />
+      <mesh position={[position.x, position.y, position.z]}>
+        <boxGeometry />
+        <meshBasicMaterial />
+      </mesh>
+      {/* <Model  />
+      <Bike position={[1, 0, 1]} /> */}
+    </>
+  );
+};
+
+export default Scene;
+
+const Scene = () => {
+  const { position, color, scale } = useControls({
+    position: {
+      value: {
+        x: 0,
+        y: 0,
+        z: 0,
+      },
+      max: 10,
+      min: -10,
+      step: 0.01,
+    },
+    color: "#ffffff",
+    click: button(() => {
+      console.log("Clicked");
+    }),
+    scale: { options: [1, 2, 3] },
+  });
+  return (
+    <>
+      <ambientLight />
+      <directionalLight />
+      <mesh scale={scale} position={[position.x, position.y, position.z]}>
+        <boxGeometry />
+        <meshBasicMaterial color={color} />
+      </mesh>
+
+    </>
+  );
+};
+
+export default Scene;
+
+
+import { button, useControls } from "leva";
+
+const Scene = () => {
+  const { position, color, scale } = useControls("cube", {
+    position: {
+      value: {
+        x: 0,
+        y: 0,
+        z: 0,
+      },
+      max: 10,
+      min: -10,
+      step: 0.01,
+    },
+    color: "#ffffff",
+    click: button(() => {
+      console.log("Clicked");
+    }),
+    scale: { options: [1, 2, 3] },
+  });
+
+  const sphereTweak = useControls("sphere", {
+    Rotations: 0,
+  });
+  return (
+    <>
+      <ambientLight />
+      <directionalLight />
+      <mesh scale={scale} position={[position.x, position.y, position.z]}>
+        <boxGeometry />
+        <meshBasicMaterial color={color} />
+      </mesh>
+    </>
+  );
+};
+
+export default Scene;
+
+
+ray caster or e.stopPropogation
+
+import { useState } from "react";
+
+const Scene = () => {
+  const [active, setActive] = useState(false);
+
+  function handleActiveState() {
+    setActive((active) => !active);
+  }
+
+  return (
+    <>
+      <mesh position-x={1} onClick={handleActiveState}>
+        <boxGeometry />
+        <meshBasicMaterial color={active ? "red" : "blue"} />
+      </mesh>
+      <mesh
+        position-x={-1}
+        onClick={(e) => {
+          e.stopPropagation();
+        }}
+      >
+        <boxGeometry />
+        <meshBasicMaterial />
+      </mesh>
+    </>
+  );
+};
+
+export default Scene;
+
+
+=>Lights and Helpers useHelper directionallight ambintlight
+
+import { useHelper } from "@react-three/drei";
+import { useRef } from "react";
+import * as THREE from "three";
+
+const Scene = () => {
+  const lightRef = useRef(null!);
+  useHelper(lightRef, THREE.DirectionalLightHelper, 1);
+  return (
+    <>
+      <ambientLight />
+      <directionalLight
+        ref={lightRef}
+        position={[0, 0, 1]}
+        color={"#0022ff"}
+        intensity={2}
+        castShadow
+      />
+
+      <mesh castShadow position-z={1}>
+        <boxGeometry />
+        <meshStandardMaterial />
+      </mesh>
+      <mesh receiveShadow scale={5}>
+        <planeGeometry />
+        <meshStandardMaterial side={THREE.DoubleSide} color="tomato" />
+      </mesh>
+    </>
+  );
+};
+
+export default Scene;
+
+export default function App() {
+  return (
+    <Canvas shadows>
+      <Scene />
+      <OrbitControls />
+    </Canvas>
+  );
+}
+
+first create diretionalLight and ambientlight(all direction)
+use useRef to target dirctionallight
+give value to  useHelper
+
+enable shadows in the canvas
+
+add castShadow and reciveShadow
+
+
+sparkels 
+
+<Sparkles
+  /** Number of particles (default: 100) */
+  count?: number
+  /** Speed of particles (default: 1) */
+  speed?: number | Float32Array
+  /** Opacity of particles (default: 1) */
+  opacity?: number | Float32Array
+  /** Color of particles (default: 100) */
+  color?: THREE.ColorRepresentation | Float32Array
+  /** Size of particles (default: randomized between 0 and 1) */
+  size?: number | Float32Array
+  /** The space the particles occupy (default: 1) */
+  scale?: number | [number, number, number] | THREE.Vector3
+  /** Movement factor (default: 1) */
+  noise?: number | [number, number, number] | THREE.Vector3 | Float32Array
+/>
+
+import { useHelper, Sparkles } from "@react-three/drei";
+import { useRef } from "react";
+
+
+const Scene = () => {
+  const lightRef = useRef(null!);
+  return (
+    <>
+      <ambientLight />
+      <directionalLight
+        ref={lightRef}
+        position={[0, 0, 1]}
+        color={"#0022ff"}
+        intensity={2}
+        castShadow
+      />
+      <Sparkles
+        count={400}
+        speed={0.5}
+        opacity={2}
+        color={"#00ff40"}
+        scale={[10, 10, 10]}
+        size={2}
+      />
+      <mesh castShadow position-z={1}>
+        <boxGeometry />
+        <meshStandardMaterial />
+      </mesh>
+     
+    </>
+  );
+};
+
+export default Scene;
+
+import {
+  OrbitControls,
+  useHelper,
+  Sparkles,
+  CameraShake,
+  Stars,
+  Sky,
+  Cloud,
+  Environment,
+  Lightformer,
+} from "@react-three/drei";
+import { useRef } from "react";
+import * as THREE from "three";
+import { useControls } from "leva";
+
+const Scene = () => {
+  const directionaLight = useRef();
+  // useHelper(directionaLight, THREE.DirectionalLightHelper, 1);
+
+  const { sunPosition } = useControls("sky", {
+    sunPosition: { value: [0, 1, 0] },
+  });
+
+  const { meshIntensity } = useControls("meshIntensity", {
+    meshIntensity: { value: 1, min: 0, max: 5 },
+  });
+
+  const { height, radius, scale } = useControls("ground", {
+    height: { value: 6, min: 0, max: 10 },
+    radius: { value: 60, min: 0, max: 100 },
+    scale: { value: 70, min: 0, max: 100 },
+  });
+
+  return (
+    <>
+      <ambientLight />
+      {/* <directionalLight ref={directionaLight} castShadow /> */}
+      <OrbitControls />
+      {/* <Sparkles
+        count={300}
+        speed={0.2}
+        opacity={3}
+        color="#68C2ED"
+        size={1}
+        scale={[10, 10, 10]}
+      /> */}
+
+      {/* <Stars
+        radius={2}
+        depth={50}
+        count={5000}
+        factor={4}
+        saturation={0}
+        fade
+        speed={1}
+      />
+
+      <Cloud
+        opacity={1}
+        speed={0.2}
+        width={10}
+        depth={1.5}
+        segments={40}
+        depthTest={false}
+      /> */}
+
+      {/* <Sky sunPosition={sunPosition} /> */}
+
+      {/* <Environment
+        files={"./envMap/1.hdr"}
+        ground={{
+          height: height,
+          radius: radius,
+          scale: scale,
+        }}
+      > */}
+      {/* <mesh position-z={-1} scale={5}>
+          <planeGeometry />
+          <meshBasicMaterial color="orange" />
+        </mesh> */}
+      {/* <Lightformer position-z={-1} scale={5} color="orange" intensity={5} /> */}
+      <Environment
+        files="./envMap/1.hdr"
+        ground={{ height: height, radius: radius, scale: scale }}
+      />
+
+      <mesh castShadow position-y={1}>
+        <boxGeometry />
+        <meshStandardMaterial color="#C7CAC7" envMapIntensity={meshIntensity} />
+      </mesh>
+
+      <mesh receiveShadow position-y={0} rotation-x={-Math.PI * 0.5}>
+        <planeGeometry args={[8, 8]} />
+        <meshStandardMaterial color="#CC3941" />
+      </mesh>
+    </>
+  );
+};
+
+export default Scene;
+
+different thpes of staging
+stars,sky,sparkle,Environment,cloud
+
+
+import {
+  OrbitControls,
+  Environment,
+  PerspectiveCamera,
+  CubeCamera,
+} from "@react-three/drei";
+import { useFrame } from "@react-three/fiber";
+import { useRef } from "react";
+
+const Scene = () => {
+  const cubeRef = useRef();
+
+  useFrame((_, delta) => {
+    // cubeRef.current.rotation.x += delta;
+    // cubeRef.current.rotation.y += delta;
+  });
+
+  return (
+    <>
+      <OrbitControls />
+      <Environment background files="./envMap/1.hdr" />
+
+      {/* <PerspectiveCamera makeDefault position={[0, 0, 5]} fov={75} /> */}
+
+      <CubeCamera resolution={1024} frames={1}>
+        {(texture) => (
+          <mesh>
+            <sphereGeometry args={[1, 64, 64]} />
+            <meshStandardMaterial
+              envMap={texture}
+              roughness={0}
+              metalness={0.9}
+            />
+          </mesh>
+        )}
+      </CubeCamera>
+      <mesh ref={cubeRef} position-z={5}>
+        <boxGeometry />
+        <meshBasicMaterial color="purple" />
+      </mesh>
+    </>
+  );
+};
+
+export default Scene;
+

@@ -134,3 +134,7 @@ select fname,salary, case when salary >= 50000 then 'high' when salary >= 40000 
 select fname,salary,case when salary > 0 then round(salary*.10) end as bonus from employe
 es;
 
+
+Join
+cross join , inner join, left join, right join.
+

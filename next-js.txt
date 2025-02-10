@@ -471,6 +471,89 @@ return NextResponse. redirect(new URL("/", request.url));
 // export const config = {
 matcher: "/profile",
 
+SSR
+hydration
+During hydration, React takes control in the browser, reconstructing the
+component tree in memory based on the static HTML that was served
+
+It carefully plans the placement of interactive elements within this tree. Then,
+React proceeds to bind the necessary JavaScript logic to these elements
+
+This involves initializing the application state, attaching event handlers for actions
+such as clicks and mouseovers, and setting up any other dynamic functionalities
+required for a fully interactive user experience
+
+Drawbacks of SSR - All or Nothing Waterfall
+
+1.Data fetching must be completed before the server can begin rendering
+HTML
+
+2. The JavaScript required for the components needs to be fully loaded on the
+client side before the hydration process can start
+3. All components have to be hydrated before they become interactive
+
+These issues contribute to an 'all-or-nothing' waterfall scenario, resulting in
+inefficiencies, especially if certain parts of your application are slower than others
+
+solution
+Selective Hydration on the Client
+
+By wrapping the main section within `<Suspense>`, you've indicated to React that
+it should not prevent the rest of the page from not just streaming but also from
+hydrating
+
+This feature, called selective hydration allows for the hydration of sections as
+they become available, before the rest of the HTML and the JavaScript code are
+fully downloaded
+
+Thanks to Selective Hydration, a heavy piece of JS doesn't prevent the rest of the
+page from becoming interactive
+
+Selective Hydration offers a solution to the third issue: the necessity to "hydrate
+everything to interact with anything"
+
+React begins hydrating as soon as possible, enabling interactions with elements
+like the header and side navigation without waiting for the main content to be
+hydrated
+
+This process is managed automatically by React
+
+In scenarios where multiple components are awaiting hydration, React prioritizes
+hydration based on user interactions
+
+Drawbacks of Suspense SSR
+
+First, even though JavaScript code is streamed to the browser asynchronously,
+eventually, the entire code for a web page must be downloaded by the user
+
+As applications add more features, the amount of code users need to download
+also grows. This leads to an important question:
+
+should users really have to download so much data?
+Second, the current approach requires that all React components undergo
+hydration on the client-side, irrespective of their actual need for interactivity
+
+This process can inefficiently spend resources and extend the loading times and
+time to interactivity for users, as their devices need to process and render
+components that might not even require client-side interaction
+Third, in spite of servers' superior capacity for handling intensive processing tasks,
+the bulk of JavaScript execution still takes place on the user's device
+
+This can slow down the performance, especially on devices that are not very
+powerful
+
+This leads to another important question:
+
+should so much of the work be done on the user's device?
+
+solution
+rsc
+
+SSG
+SSG occurs at build time, when the application is deployed on the server. This
+results in pages that are already rendered and ready to serve. It is ideal for
+content that doesn't change often, like blog posts
+
 Client-side Rendering
 This method of rendering, where the component code is transformed into a user
 interface directly within the browser (the client), is known as client-side rendering
@@ -479,6 +562,7 @@ CSR quickly became the standard for SPAs, with widespread adoption
 It wasn't long before developers began noticing some inherent drawbacks to this
 approach
 Drawbacks of CSR
+
 
 SEO
 
@@ -504,8 +588,147 @@ download, parse, and execute JavaScript before the user sees any meaningful
 content on the page
 
 
+React Server Components (RSC)
+React Server Components (RSC) represent a new architecture designed by the
+React team
 
+This approach aims to leverage the strengths of both server and client
+environments, optimizing for efficiency, load times, and interactivity
+
+The architecture introduces a dual-component model
+
+- Client Components
+- Server Components
+
+This distinction is not based on the functionality of the components but rather on
+where they execute and the specific environments they are designed to interact
+with
+
+Server Components
+Server Components represent a new type of React component specifically
+designed to operate exclusively on the server
+
+And unlike client components, their code stays on the server and is never
+downloaded to the client
+
+This design choice offers multiple benefits to React applications
+
+In the RSC architecture and by extension in the Next.js app router, components
+are server components by default
+
+To use client components, you must include the use client directive at the top
+
+Server components are rendered only on the server
+
+Client components are rendered once on the server and then on the client
+
+Rending technique(static, dynamic, streaming) html from server to client
+
+static default cache
+Static rendering is a strategy where the HTML is generated at build time
+
+Along with the HTML, the RSC payload is created for each component, and
+JavaScript chunks are produced for client-side component hydration in the
+browser
+
+If you navigate directly to a page route, the corresponding HTML file is served
+
+I you navigate to the route from a different one, the route is created on the client
+side using the RSC payload and JavaScript chunks, without any additional
+requests to the server
+
+
+dynamic
+Dynamic rendering is a strategy where the HTML is generated at request time
+
+Next.js automatically switches to dynamic rendering when it comes across a
+dynamic function in the component, such as cookies(), headers(), or the
+searchParams object
+
+This form of rendering is great for when we need to render HTML personalized to
+a user, such as a social media feed
+
+As a developer, you do not need to choose between static and dynamic rendering.
+Next.js will automatically choose the best rendering strategy for each route based
+on the features and APIs used
 nextjs 15
+
+Sreaming
+import { Suspense } from "react";
+
+import { Product } from "@/components/product";
+import { Reviews } from "@/components/reviews";
+
+export default function ProductDetailPage() {
+return
+<div>
+<h1>Product detail page</h1>
+<Suspense fallback={<p>Loading product details ...< /p>}>
+<Product />
+</Suspense>
+<Suspense fallback={<p>Loading reviews ...< /p>}>
+<Reviews />
+</Suspense>
+</div>
+
+}
+
+RSC payload 
+
+Server only
+npm i server-only
+
+Clent only
+npm i client-only
+
+Request Memoization defaut feature
+Request memoization is a React feature, not specifically a Next.js feature
+
+Memoization only applies to the GET method in fetch requests
+
+Memoization only applies within the React Component tree. It does not extend to
+fetch requests in Route Handlers as they are not part of the React component tree
+
+For cases where fetch is not suitable (e.g., some database clients, CMS clients, or
+GraphQL clients), you can use the React cache function to memoize functions
+
+Revalidation
+You can set the revalidate route segment configuration to establish the default
+revalidation time for a layout or page: export const revalidate = 10;
+
+Regarding the revalidation frequency, the lowest revalidate time across each
+layout and page of a single route will determine the revalidation frequency of the
+entire route
+revalidate
+const response = await fetch("http://localhost:3001/products", {
+next: {
+revalidate: 10,}})
+
+client side data fetching
+can use tanstack query 
+
+
+note
+we can put client component inside the server component
+when a server component is used inside the client component it change to client component and it children also so use client component less and in place were need solution we can pass as children  prop
+data is cached on server so if there console.log it will only log one time and all static routes are cached server side persisten cache and its called Data cache not browser cache
+For individual data fetches, you can opt out of caching by setting the cache option
+to no-store
+
+Once you specify the no-store option for a fetch request, subsequent fetch
+requests will also not be cached
+
+By default, Next.js will cache fetch() requests that occur before any dynamic
+functions (cookies(), headers(), searchParams) are used and will not cache
+requests found after dynamic functions
+
+browser-> server(rendering -> request memoization->data cache->datasource)
+
+We also know that we can opt out of caching
+
+- by using the cache: "no-store" option in a fetch request
+- by using a dynamic function before making the fetch request
+- by using a route segment config like fetch-cache or dynamic
 
 import React from "react";
 
@@ -513,6 +736,7 @@ const UserProfile = async ({ params }: { params: { id: string } }) => {
   const { id } = await params;
   return <div>Product : {id}</div>;
 };
+
 
 export default UserProfile;
 

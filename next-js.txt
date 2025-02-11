@@ -707,6 +707,83 @@ revalidate: 10,}})
 client side data fetching
 can use tanstack query 
 
+Caching
+fullroute cache -> time-based on-demand disable 
+data caching
+router caching 
+request momoiztion
+
+rendering mode -> ssg isr ssr 
+Static Routes (SSG)	Fully cached (Build Time)	Use ISR (revalidate: X)
+Dynamic Routes (ISR Incremental Static Regeneration)	Cached, updates after X sec	Change revalidate value
+SSR (Server-Side Rendering)	No caching (fetches on request)	Always fresh, can't cache
+Client-Side Fetching	No caching by default	Use SWR, React Query
+Server Components	Cached (auto)	Use cache: "no-store" or revalidate
+
+ (Solid Circle)	Static Page (SSG)	Pre-rendered at build time and cached. Great for SEO.
+○ (Hollow Circle)	Static Page (ISR)	Pre-rendered but can be updated using ISR (revalidate).
+λ (Lambda)	Server-Side Rendering (SSR)	Page is rendered on request at runtime (not cached).
+⚡ (Lightning Bolt)	Edge Function	Page/API runs on the Edge (faster, globally distributed).
+⊙ (Dynamic without pre-render)	Fallback Page	Used when ISR is enabled and the page is being generated.
+
+fully cache 
+on demand choice based aching /delete & create revalidatePath("/");
+disable caching i wand everytime fresh data export const dynamic = "force-dynamic"; export const revalidate=0;
+
+
+
+Server Action
+Server Actions is a new experimental feature in Next.js 14+ that allows you to run server-side logic directly from a React component without using API routes.
+
+"use client"; // Required for event handlers
+
+async function submitContactForm(formData) {
+  "use server"; // Marks this function as a Server Action
+
+  // Simulate saving to a database (Replace with real DB logic)
+  console.log("Form Submitted:", formData.get("name"), formData.get("message"));
+
+  return { success: true };
+}
+
+export default function ContactForm() {
+  async function handleSubmit(formData) {
+    const response = await submitContactForm(formData);
+    if (response.success) alert("Form submitted successfully!");
+  }
+
+  return (
+    <form action={handleSubmit}>
+      <input name="name" placeholder="Your Name" required />
+      <textarea name="message" placeholder="Your Message" required />
+      <button type="submit">Send</button>
+    </form>
+  );
+}
+
+or
+
+"use server";
+import { db } from "@/lib/db"; // Your database connection
+
+export async function addUser(formData) {
+  const name = formData.get("name");
+  const email = formData.get("email");
+
+  await db.user.create({
+    data: { name, email },
+  });
+
+  return { success: true };
+}
+
+<form action={addUser}>
+  <input name="name" placeholder="Name" required />
+  <input name="email" placeholder="Email" required />
+  <button type="submit">Add User</button>
+</form>
+
+
 
 note
 we can put client component inside the server component
@@ -729,6 +806,27 @@ We also know that we can opt out of caching
 - by using the cache: "no-store" option in a fetch request
 - by using a dynamic function before making the fetch request
 - by using a route segment config like fetch-cache or dynamic
+
+
+next js 15
+no cache in fetch request are no longer cached by defualt
+
+Therefore, we are transitioning APIs that rely on request-specific
+data-such as headers, cookies, params, and searchParams -to
+be asynchronous.
+export default async function Page({ params }: { params:
+Promise<{ id: string }> }) {
+const id = (await params).id
+}
+
+
+turbo pack 
+add "dev": "next dev --turbo"
+get  route handler are no longer cached by default
+
+
+
+
 
 import React from "react";
 

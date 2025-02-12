@@ -77,8 +77,6 @@ Route Group Layout
 if i have  (auth)->(with-auth-layout)->login,register;fogetpasswod
 this layout will not shared with fogetpassword folder
 
-
-
 6)Routing Metadata
 Routing Metadata
 Ensuring proper search engine optimization (SEO) is crucial for increasing
@@ -192,7 +190,7 @@ export default function ErrorBoundary({
   );
 }
 
-****if layout and error on same folder adjacent when error in layout it will not show to handle this put the error on the parent folder
+**if layout and error on same folder adjacent when error in layout it will not show to handle this put the error on the parent folder
 <Layout>
 <Template>
 <ErrorBoundary fallback={<Error />}>

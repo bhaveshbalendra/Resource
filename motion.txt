@@ -1,0 +1,650 @@
+**Framer Motion Props Detailed Cheat Sheet**
+
+---
+
+## 1. `initial`
+
+Defines the starting state of the animation.
+
+```jsx
+<motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} />
+```
+
+**Inner Properties:**
+
+- `opacity`: Controls transparency (0 = invisible, 1 = fully visible)
+- `x, y`: Defines position on X and Y axis
+- `scale`: Adjusts size of the component
+- `rotate`: Rotates the component in degrees
+
+---
+
+## 2. `animate`
+
+Defines the final state of the animation.
+
+```jsx
+<motion.div animate={{ x: 100, opacity: 1 }} />
+```
+
+**Inner Properties:**
+
+- Same as `initial`
+
+---
+
+## 3. `transition`
+ transition can be placed inside a variant or outside in the component's props. Both approaches work, but they have different use cases.
+const buttonVariants = {
+  hidden: { opacity: 0, scale: 0.8 },
+  visible: { opacity: 1, scale: 1, transition: { duration: 0.5 } }, // 0.5s for appearing
+  hover: { scale: 1.1, transition: { duration: 0.2 } }, // 0.2s for hover
+  exit: { opacity: 0, scale: 0, transition: { duration: 1 } }, // 1s for exit
+};
+
+<MotionButton
+  variants={buttonVariants}
+  initial="hidden"
+  animate="visible"
+  exit="exit"
+  whileHover="hover"
+  transition={{ ease: "easeInOut" }} // This applies globally unless overridden
+/>;
+
+<MotionButton
+  variants={buttonVariants}
+  initial="hidden"
+  animate="visible"
+  whileHover="hover"
+  transition={{ duration: 0.5 }} // Global transition
+/>
+
+
+Controls timing, easing, and delays.
+
+```jsx
+<motion.div
+  animate={{ scale: 1.5 }}
+  transition={{ duration: 0.5, ease: "easeInOut" }}
+/>
+```
+
+**Inner Properties:**
+
+- `duration`: Time in seconds
+- `ease`: `"easeIn" | "easeOut" | "easeInOut" | "linear"`
+- `delay`: Delay before animation starts
+- `repeat`: Number of times to repeat animation (`Infinity` for looping)
+- `staggerChildren`: Delays child animations by specified seconds
+
+---
+
+## 4. `exit`
+
+AnimatePresence is required when you animate components as they exit the DOM. Without it, Framer Motion cannot detect unmounting elements, and the exit animation won’t work.
+
+Defines the animation when the component unmounts.
+
+```jsx
+<motion.div exit={{ opacity: 0, x: -100 }} />
+```
+example
+import { AnimatePresence, motion } from "motion/react";
+import { useState } from "react";
+import { Button } from "./components/ui/button";
+
+const MotionButton = motion(Button);
+
+const App = () => {
+  const [isVisible, setIsVisible] = useState(true);
+
+  return (
+    <div className="flex flex-col justify-center items-center h-screen gap-4">
+      <AnimatePresence>
+        {isVisible && (
+          <MotionButton
+            variant="destructive"
+            size="lg"
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            Click me
+          </MotionButton>
+        )}
+      </AnimatePresence>
+
+      <Button variant="outline" onClick={() => setIsVisible(!isVisible)}>
+        Toggle Button
+      </Button>
+    </div>
+  );
+};
+
+export default App;
+
+
+**Inner Properties:**
+
+- Same as `animate`
+
+---
+
+## 5. `whileHover`
+
+Triggers animation on hover.
+
+```jsx
+<motion.button
+  whileHover={{ scale: 1.1, backgroundColor: "#ff0055" }}
+>
+  Hover me
+</motion.button>
+```
+
+**Inner Properties:**
+
+- Same as `animate`
+
+---
+
+## 6. `whileTap`
+
+Triggers animation on click/tap.
+
+```jsx
+<motion.button whileTap={{ scale: 0.9 }}>Click me</motion.button>
+```
+
+**Inner Properties:**
+
+- Same as `animate`
+
+---
+
+## 7. `whileFocus`
+
+Triggers animation on focus.
+
+```jsx
+<motion.input whileFocus={{ borderColor: "#ff0055" }} />
+```
+
+**Inner Properties:**
+
+- `borderColor`, `scale`, `opacity`, etc.
+
+---
+
+## 8. `whileInView`
+
+Triggers animation when the component is in the viewport.
+
+```jsx
+<motion.div whileInView={{ opacity: 1, y: 0 }} initial={{ opacity: 0, y: 50 }} />
+```
+
+**Inner Properties:**
+
+- Same as `animate`
+- `once`: Boolean, whether animation should happen only once
+
+---
+
+## 9. `variants`
+Variants in Framer Motion help you define reusable animation states and apply them dynamically to components. Instead of manually writing initial, animate, and exit properties inside a component, variants let you organize animations in an easy-to-read, reusable format.
+A structured way to define multiple animation states.
+
+```jsx
+const boxVariants = {
+  hidden: { opacity: 0, x: -100 },
+  visible: { opacity: 1, x: 0, transition: { duration: 0.5 } }
+};
+<motion.div variants={boxVariants} initial="hidden" animate="visible" />
+```
+
+example
+import { motion } from "framer-motion";
+import { Button } from "./components/ui/button";
+
+// Define more animations using variants
+const buttonVariants = {
+  hidden: { opacity: 0, scale: 0.8 },
+  visible: { opacity: 1, scale: 1 },
+  hover: { scale: 1.1, transition: { duration: 0.2 } },
+  tap: { scale: 0.9 },
+  drag: { rotate: 10 },
+};
+
+const MotionButton = motion(Button);
+
+const App = () => {
+  return (
+    <div className="flex justify-center items-center h-screen">
+      <MotionButton
+        variant="default"
+        size="lg"
+        variants={buttonVariants}
+        initial="hidden"
+        animate="visible"
+        whileHover="hover"
+        whileTap="tap"
+        whileDrag="drag"
+        drag
+      >
+        Drag Me
+      </MotionButton>
+    </div>
+  );
+};
+
+export default App;
+
+**Inner Properties:**
+
+- `hidden`, `visible`: Custom animation states
+
+---
+
+## 10. `drag`
+
+Makes elements draggable.
+
+```jsx
+<motion.div drag dragConstraints={{ left: -100, right: 100 }} />
+```
+
+**Inner Properties:**
+
+- `dragConstraints`: Defines boundaries for dragging
+- `dragElastic`: Determines elasticity (`0` = rigid, `1` = full elasticity)
+- `dragSnapToOrigin`: Moves back to initial position on release
+- `dragTransition`: Defines transition behavior
+
+---
+
+## 11. `layout`
+
+Enables automatic animations when layout changes.
+
+```jsx
+<motion.div layout className="p-4 bg-green-500" />
+```
+
+**Inner Properties:**
+
+- `layoutId`: Syncs animations across components
+- `layoutDependency`: Re-triggers animation when dependency changes
+import { useState } from "react";
+import { motion } from "framer-motion";
+import { Button } from "./components/ui/button";
+
+const App = () => {
+  const [isExpanded, setIsExpanded] = useState(false);
+
+  return (
+    <div className="flex flex-col justify-center items-center h-screen gap-4">
+      <motion.div
+        className="bg-blue-500 text-white flex items-center justify-center rounded-lg p-4"
+        layout
+        style={{
+          width: isExpanded ? 200 : 100,
+          height: isExpanded ? 200 : 100,
+        }}
+      >
+        Resize Me
+      </motion.div>
+
+      <Button onClick={() => setIsExpanded(!isExpanded)}>Toggle Size</Button>
+    </div>
+  );
+};
+
+import { useState } from "react";
+import { motion } from "framer-motion";
+
+const App = () => {
+  const [items, setItems] = useState([1, 2, 3, 4]);
+
+  const shuffleItems = () => {
+    setItems([...items].sort(() => Math.random() - 0.5));
+  };
+
+  return (
+    <div className="flex flex-col justify-center items-center h-screen gap-4">
+      <button onClick={shuffleItems} className="p-2 bg-blue-500 text-white rounded-lg">
+        Shuffle
+      </button>
+
+      <div className="flex flex-col gap-2">
+        {items.map((item) => (
+          <motion.div
+            key={item}
+            layout
+            className="p-4 bg-gray-300 rounded-lg shadow-md"
+          >
+            Item {item}
+          </motion.div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+import { motion } from "framer-motion";
+import { useState } from "react";
+
+const App = () => {
+  const [isOpen, setIsOpen] = useState(false);
+
+  return (
+    <div className="flex justify-center items-center h-screen">
+      <motion.div
+        layout
+        onClick={() => setIsOpen(!isOpen)}
+        className="bg-white p-4 rounded-lg shadow-md cursor-pointer w-60"
+      >
+        <motion.h2 layout className="text-xl font-bold">
+          Click to {isOpen ? "Collapse" : "Expand"}
+        </motion.h2>
+        {isOpen && (
+          <motion.p layout className="mt-2 text-gray-600">
+            This is an expanding card! Thanks to `layout`, height changes are
+            smoothly animated.
+          </motion.p>
+        )}
+      </motion.div>
+    </div>
+  );
+};
+
+Bonus: layoutId for Page Transitions
+<motion.img
+  src="/logo.png"
+  layoutId="logo"
+/>
+
+
+advance
+
+keyframe
+
+Basic Keyframes	x: [0, 100, -100, 0]	Moves element between positions
+Multiple Properties	scale: [1, 1.2, 1], opacity: [1, 0.5, 1]	Animate multiple things at once
+Variants	variants={boxVariants} animate="animate"	Organizes animations neatly
+Looping Animations	repeat: Infinity, repeatType: "reverse"	Infinite pulsing/bouncing effects
+Different Durations	{ x: { duration: 2 }, rotate: { duration: 1 } }	Fine control over each animation
+Delays with times	times: [0, 0.2, 0.8, 1]	Controls when each keyframe happens
+Animating Images	<motion.img animate={{ y: [0, -20, 0] }}/>	Smooth animations for images
+
+<motion.div
+  animate={{
+    x: [0, 150, -150, 0],
+    rotate: [0, 180, 360],
+    scale: [1, 1.5, 1],
+  }}
+  transition={{
+    x: { duration: 2, ease: "easeInOut" },
+    rotate: { duration: 1, repeat: Infinity },
+    scale: { duration: 1.5 },
+  }}
+/>
+
+<motion.img
+  src="https://placekitten.com/200/200"
+  className="w-20 h-20 rounded-full"
+  animate={{
+    y: [0, -20, 0], // Bounces up & down
+    opacity: [1, 0.7, 1],
+  }}
+  transition={{
+    duration: 1,
+    repeat: Infinity,
+    repeatType: "reverse",
+  }}
+/>
+
+<motion.div
+  animate={{
+    x: [0, 150, -150, 0],
+    opacity: [1, 0.5, 1],
+  }}
+  transition={{
+    duration: 3,
+    ease: "easeInOut",
+    times: [0, 0.2, 0.8, 1], // Control animation timing
+  }}
+/>
+
+<motion.div
+  animate={{
+    scale: [1, 1.2, 1],
+  }}
+  transition={{
+    duration: 1,
+    repeat: Infinity, // Loops forever
+    repeatType: "reverse", // Reverses animation on repeat
+  }}
+/>
+
+const boxVariants = {
+  animate: {
+    x: [0, 150, -150, 0],
+    opacity: [1, 0.5, 1],
+    scale: [1, 1.5, 1],
+    transition: { duration: 2, ease: "easeInOut" },
+  },
+};
+
+<motion.div variants={boxVariants} animate="animate" />
+
+<motion.div
+  animate={{
+    x: [0, 150, -150, 0],  // Moves left and right
+    opacity: [1, 0.5, 1],   // Fade in and out
+    scale: [1, 1.2, 1],     // Scale up and down
+  }}
+  transition={{ duration: 2, ease: "easeInOut" }}
+/>
+------------------------------------------------------------
+->Stagger
+
+Staggering is when animations start one after the other with a small delay, creating a cascading effect.
+It makes lists, grids, and group elements look more dynamic.
+
+Framer Motion provides staggerChildren inside the transition property of a motion.div (parent).
+
+import { motion } from "framer-motion";
+
+const App = () => {
+  const containerVariants = {
+    hidden: {},
+    animate: {
+      transition: {
+        staggerChildren: 1, // Each child appears after 1s
+      },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    animate: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 1 }, // No delay here
+    },
+  };
+
+  return (
+    <div className="w-full h-screen flex justify-center items-center">
+      <motion.ul
+        variants={containerVariants}
+        initial="hidden"
+        animate="animate" // Corrected to match containerVariants
+        className="flex flex-col gap-2"
+      >
+        {[1, 2, 3, 4, 5].map((e: number, i: number) => (
+          <motion.li
+            key={i}
+            variants={itemVariants}
+            className="bg-red-400 p-4 rounded-lg font-medium"
+          >
+            Item {e}
+          </motion.li>
+        ))}
+      </motion.ul>
+    </div>
+  );
+};
+
+export default App;
+
+import { motion } from "framer-motion";
+
+const containerVariants = {
+  animate: {
+    transition: {
+      staggerChildren: 0.3, // Each child appears with a 0.3s delay
+      delayChildren: 0.5, // Delay before starting the first child animation
+    },
+  },
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 20 }, // Items start invisible and lower
+  show: { opacity: 1, y: 0, transition: { duration: 0.5 } }, // Items fade in and move up
+};
+
+export default function StaggerList() {
+  return (
+    <motion.ul
+      variants={containerVariants} // Apply container variants
+      initial="hidden" // Start with hidden state
+      animate="animate" // Trigger animation state
+      className="flex flex-col gap-4"
+    >
+      {[1, 2, 3, 4, 5].map((item) => (
+        <motion.li key={item} variants={itemVariants} className="bg-blue-500 text-white p-4 rounded-md">
+          Item {item}
+        </motion.li>
+      ))}
+    </motion.ul>
+  );
+}
+
+----------------------------------------
+->useInView()
+
+import { motion, useInView } from "framer-motion";
+import { useRef } from "react";
+
+const App = () => {
+  return (
+    <div className="h-[350vh] flex flex-col items-center justify-center gap-20 bg-gray-900 text-white">
+      <h1 className="text-4xl font-bold mb-10">
+        Scroll Down to See Animations
+      </h1>
+
+      <AnimatedDiv delay={0} color="bg-blue-500" text="Fade In" effect="fade" />
+      <AnimatedDiv
+        delay={0.2}
+        color="bg-green-500"
+        text="Scale Up"
+        effect="scale"
+      />
+      <AnimatedDiv
+        delay={0.4}
+        color="bg-red-500"
+        text="Rotate"
+        effect="rotate"
+      />
+      <AnimatedDiv
+        delay={0.6}
+        color="bg-yellow-500 text-black"
+        text="Slide Left"
+        effect="slideLeft"
+      />
+      <AnimatedDiv
+        delay={0.8}
+        color="bg-purple-500"
+        text="Slide Right"
+        effect="slideRight"
+      />
+      <AnimatedDiv
+        delay={1.0}
+        color="bg-pink-500"
+        text="Flip X"
+        effect="flipX"
+      />
+      <AnimatedDiv
+        delay={1.2}
+        color="bg-orange-500"
+        text="Flip Y"
+        effect="flipY"
+      />
+      <AnimatedDiv delay={1.4} color="bg-teal-500" text="Skew" effect="skew" />
+      <AnimatedDiv
+        delay={1.6}
+        color="bg-indigo-500"
+        text="Bounce"
+        effect="bounce"
+      />
+      <AnimatedDiv
+        delay={1.8}
+        color="bg-gray-500"
+        text="Wobble"
+        effect="wobble"
+      />
+    </div>
+  );
+};
+
+// 🟢 Component for each animated div with different effects
+const AnimatedDiv = ({ delay, color, text, effect }) => {
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true, margin: "-100px" });
+
+  // Define different animation effects
+  const variants = {
+    fade: { opacity: 1, y: 0 },
+    scale: { scale: 1, opacity: 1 },
+    rotate: { rotate: 360, opacity: 1 },
+    slideLeft: { x: 0, opacity: 1 },
+    slideRight: { x: 0, opacity: 1 },
+    flipX: { rotateX: 0, opacity: 1 },
+    flipY: { rotateY: 0, opacity: 1 },
+    skew: { skewX: 10, opacity: 1 },
+    bounce: { y: [0, -20, 0], opacity: 1 },
+    wobble: { x: [0, -10, 10, -10, 10, 0], opacity: 1 },
+  };
+
+  // Initial hidden state
+  const initialStates = {
+    fade: { opacity: 0, y: 50 },
+    scale: { scale: 0.5, opacity: 0 },
+    rotate: { rotate: 0, opacity: 0 },
+    slideLeft: { x: -100, opacity: 0 },
+    slideRight: { x: 100, opacity: 0 },
+    flipX: { rotateX: 90, opacity: 0 },
+    flipY: { rotateY: 90, opacity: 0 },
+    skew: { skewX: 0, opacity: 0 },
+    bounce: { y: 50, opacity: 0 },
+    wobble: { x: 0, opacity: 0 },
+  };
+
+  return (
+    <motion.div
+      ref={ref}
+      initial={initialStates[effect]}
+      animate={isInView ? variants[effect] : {}}
+      transition={{ duration: 0.6, delay, ease: "easeInOut" }}
+      className={`w-64 h-32 flex items-center justify-center rounded-xl ${color} text-xl font-bold shadow-lg`}
+    >
+      {text}
+    </motion.div>
+  );
+};
+
+export default App;
+

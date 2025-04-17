@@ -1,0 +1,206 @@
+
+200 OK	The request was successful, and the response contains the requested data.
+201 Created	The request was successful, and a new resource was created.
+
+400 Errors Bad Request 
+
+Missing Required Fields – A required field (e.g., email, password) is missing.
+
+Invalid Data Format – The client sends incorrectly formatted data (e.g., sending a string instead of a number).
+
+Malformed JSON – The request body is not properly formatted JSON.
+
+Wrong Query Parameters – The request contains an invalid or unexpected query parameter.
+
+Incorrect HTTP Method – Sending a GET request when POST is required.
+
+✅ 401 → Unauthorized (Invalid Token) Authentication is required but missing or invalid.
+✅ 403 → Forbidden (Access Denied) The client is authenticated but does not have permission to access the resource.
+
+404 Errors (Resource Not Available) Not Found
+Incorrect URL – The user is requesting a non-existent page (e.g., /wrong-page).
+
+Resource Deleted – The file, API, or page has been removed from the server.
+
+Backend Route Missing – The API endpoint is not defined in your Express.js server.
+
+Frontend Routing Issue – A React/Next.js app with client-side routing might not serve a page when refreshed.
+
+Server Misconfiguration – The server is not properly handling requests for missing resources.
+
+
+500 Errors → Internal Server Error (Bug in Server Code)
+
+------------------------------------------------------------------------------------------------------------
+1) error of simple
+
+{
+  "name": "ValidationError",
+  "message": "User validation failed: email: Invalid email format",
+  "errors": {
+    "email": {
+      "message": "Invalid email format",
+      "name": "ValidatorError",
+      "path": "email",
+      "value": "wrong-email"
+    }
+  },
+  "statusCode": 422
+}
+
+const errorMiddleware = (error: any, req: Request, res: Response, next: NextFunction) => {
+  console.error({
+    message: error.message,
+    statusCode: error.statusCode || 500,
+    stack: error.stack
+  });
+
+  res.status(error.statusCode || 500).json({
+    success: false,
+    message: error.message || "Internal Server Error"
+  });
+};
+
+axios error stuture
+
+{
+  "data": {
+    "id": 1,
+    "name": "John Doe",
+    "email": "john@example.com"
+  },
+  "status": 200,
+  "statusText": "OK",
+  "headers": {
+    "content-type": "application/json",
+    "date": "Sat, 22 Mar 2025 10:00:00 GMT"
+  },
+  "config": {
+    "method": "get",
+    "url": "https://api.example.com/user/1",
+    "headers": {
+      "Accept": "application/json",
+      "Authorization": "Bearer token"
+    }
+  },
+  "request": {}
+}
+
+axios error
+
+{
+  "message": "Request failed with status code 404",
+  "response": {
+    "data": {
+      "error": "User not found"
+    },
+    "status": 404,
+    "statusText": "Not Found",
+    "headers": {
+      "content-type": "application/json"
+    },
+    "config": {
+      "method": "get",
+      "url": "https://api.example.com/user/999",
+      "headers": {
+        "Accept": "application/json"
+      }
+    },
+    "request": {}
+  },
+  "config": {
+    "method": "get",
+    "url": "https://api.example.com/user/999"
+  }
+}
+
+app.get("/user/:id", async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const response = await axios.get(`https://api.example.com/user/${req.params.id}`);
+    res.json(response.data);
+  } catch (error: any) {
+    console.error("Axios Error:", {
+      message: error.message,
+      status: error.response?.status || 500,
+      data: error.response?.data || "No response data",
+    });
+
+    res.status(error.response?.status || 500).json({
+      success: false,
+      message: error.response?.data?.error || "Internal Server Error",
+    });
+  }
+});
+
+response.status(error.statusCode || 500).json({
+  success: false,
+  message: error.message || "Internal Server Error",
+  statusCode: error.statusCode || 500,  // Include status code explicitly
+  errorType: error.name || "ServerError",  // Specify error type
+  stack: process.env.NODE_ENV === "development" ? error.stack : undefined,  // Send stack trace only in development
+  timestamp: new Date().toISOString(),  // Include timestamp for debugging
+  path: request.originalUrl,  // The endpoint that caused the error
+  method: request.method,  // The HTTP method used (GET, POST, etc.)
+  validationErrors: error.validationErrors || undefined,  // Send validation errors if any
+});
+
+
+fetch api
+
+const fetchData = async () => {
+  try {
+    const response = await fetch("https://jsonplaceholder.typicode.com/invalid-url");
+
+    if (!response.ok) {
+      // ✅ Throw an object with status
+      throw { status: response.status, message: response.statusText };
+    }
+
+    const data = await response.json();
+    console.log("Success:", data);
+  } catch (error) {
+    if (error.status) {
+      console.error(`HTTP Error: ${error.status} - ${error.message}`);
+    } else {
+      console.error("Network Error:", error.message);
+    }
+  }
+};
+
+fetchData();
+
+const fetchData = async () => {
+  try {
+    const response = await fetch("https://jsonplaceholder.typicode.com/invalid-url");
+
+    if (!response.ok) {
+      throw new Error(`HTTP Error: ${response.status} ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    console.log("Success:", data);
+  } catch (error) {
+    if (error instanceof TypeError) {
+      console.error("Network Error:", error.message);
+    } else {
+      console.error("Fetch Error:", error.message);
+    }
+  }
+};
+
+fetchData();
+
+response.status	HTTP status code (e.g., 200, 404, 500)
+response.statusText	Status text (e.g., "OK", "Not Found")
+response.ok	Boolean (true if status is 200-299, else false)
+response.url	The URL of the response
+response.type	Response type (basic, cors, error, opaque)
+response.headers	Headers object with response headers
+response.body	Readable stream of response body
+response.json()	Parses response as JSON
+response.text()	Parses response as plain text
+response.blob()	Converts response to binary (blob)
+response.clone()	Creates a clone of the response
+
+
+-------------------------------------------------------------------------------------------------------------------------

@@ -16,3 +16,6 @@
 textarea-> resize:none
 
 overflow -> for text 
+
+
+z index
